@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OjedaGrowShop.EF\OjedaGrowShop.EF.csproj" />
+    <ProjectReference Include="..\Core\OjedaGrowShop.EF.csproj" />
   </ItemGroup>
 
 </Project>
