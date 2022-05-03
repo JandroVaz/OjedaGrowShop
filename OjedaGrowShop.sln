@@ -5,6 +5,12 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OjedaGrowShop", "OjedaGrowShop.csproj", "{EFBB0AE1-87BB-438E-BB78-C5520F874D43}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{EA36909C-533B-4828-B149-4B701A50D490}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Front", "Front", "{E0A98469-CAFC-4CAE-96C3-01F45F855221}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OjedaGrowShop.EF", "..\OjedaGrowShop.EF\OjedaGrowShop.EF.csproj", "{1EC594BA-6D7E-4718-B617-41B887D39ECB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +21,17 @@ Global
 		{EFBB0AE1-87BB-438E-BB78-C5520F874D43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFBB0AE1-87BB-438E-BB78-C5520F874D43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFBB0AE1-87BB-438E-BB78-C5520F874D43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EC594BA-6D7E-4718-B617-41B887D39ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EC594BA-6D7E-4718-B617-41B887D39ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EC594BA-6D7E-4718-B617-41B887D39ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EC594BA-6D7E-4718-B617-41B887D39ECB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EFBB0AE1-87BB-438E-BB78-C5520F874D43} = {E0A98469-CAFC-4CAE-96C3-01F45F855221}
+		{1EC594BA-6D7E-4718-B617-41B887D39ECB} = {EA36909C-533B-4828-B149-4B701A50D490}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {902722A0-1E26-4DF0-85AA-D6E4DFAD790E}

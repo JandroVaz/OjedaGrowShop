@@ -1,29 +1,104 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿<style>
+
+    .container__menu {
+        width: 100%;
+        height: 70px;
+        background-color: #009624;
+        padding: 0px 20px;
+    }
+
+    .enlacesMenu {
+        width: 100% !important;
+        height: 100% !important;
+        padding: 20px;
+        text-transform: uppercase;
+        transition: all 300ms ease;
+    }
+
+        .enlacesMenu > a {
+            font-weight: bold;
+            color: white !important;
+            text-decoration: none;
+        }
+
+        .enlacesMenu:hover {
+            transform: scale(1.1);
+            background-color: #338a3e;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+        }
+
+</style>
+
+
+
+@*
+    <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">OjedaGrowShop</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    </div>
+
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+    <li class="nav-item px-3">
+    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+    <span class="oi oi-home" aria-hidden="true"></span> Home
+    </NavLink>
+    </li>
+    <li class="nav-item px-3">
+    <NavLink class="nav-link" href="counter">
+    <span class="oi oi-plus" aria-hidden="true"></span> Counter
+    </NavLink>
+    </li>
+    <li class="nav-item px-3">
+    <NavLink class="nav-link" href="fetchdata">
+    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+    </NavLink>
+    </li>
+    </ul>
+    </div>
+*@
+
+
+<div class="container-fluid container__menu rounded-3">
+    <img src="img/Logotipo_reducido.png" alt="" style="width: 75px; margin-right: 25px; border-radius: 50%;">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-2 mt-md-0 mt-2" style="background-color: #009624 !important; ">
+            <li class="enlacesMenu">
+                <NavLink href="" Match="NavLinkMatch.All">
+                    <a class="nav-link w-100" aria-current="page">Home</a>
+                </NavLink>
+            </li>
+            <li class="enlacesMenu">
+                <NavLink href="counter">
+                    <a class="nav-link  w-100" aria-current="page">Campo</a>
+                </NavLink>
+
+            </li>
+            <li class="enlacesMenu">
+                <NavLink href="fetchdata">
+                    <a class="nav-link  w-100" aria-current="page">Mascotas</a>
+                </NavLink>
+            </li>
+            <li class="enlacesMenu">
+                <a class="nav-link  w-100" aria-current="page">Contacto</a>
+            </li>
+        </ul>
+
+    </div>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
-    </ul>
-</div>
+
+
+
+
+
+
+
 
 @code {
     private bool collapseNavMenu = true;
