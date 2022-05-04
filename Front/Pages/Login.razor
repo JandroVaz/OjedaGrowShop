@@ -1,25 +1,88 @@
 ﻿@page "/login"
-<div class="container mx-auto my-0 mb-4" style="background-color:#E2E3E5; box-shadow: 1px 1px 1px 1px black; border-radius:12px;">
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Net.Http.Headers
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+<style>
+    .formClass {
+        margin-top: 125px !important;
+        padding: 1rem;
+        max-width: 650px;
+        min-width: 300px;
+        height: 350px;
+    }
 
-    <form style="">
-        <div class="mb-3">
-            <label for="userName" class="form-label">Usuario</label>
-            <input type="text" class="form-control" id="userName" aria-describedby="userHelp">
-            <div id="userHelp" class="form-text">We'll never share your email with anyone else.</div>
-        </div>
-        <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="exampleInputPassword1">
-        </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
-        </div>
-        <button type="submit" class="btn btn-primary">Iniciar</button>
-    </form>
+    .redirect {
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+</style>
 
-</div>
+<EditForm Model="myModel" OnValidSubmit="Success">
+    <DataAnnotationsValidator />
+    
+    <div class="container mb-4 estiloFormulario align-content-center">
 
+        <div class="mx-auto my-0 text-center formClass" style="">
+
+            <h2>¡Inicia sesión!</h2>
+            <MatThemeProvider Theme="@formLogin">
+                <p>
+                    <MatTextField Label="Usuario" @bind-Value="myModel.Username" />
+                    <ValidationMessage For="@(() => myModel.Username)" />
+                </p>
+                <p>
+                    <MatTextField Label="Contraseña" @bind-Value="myModel.Password" Type="password" />
+                    <ValidationMessage For="@(() => myModel.Password)" />
+                </p>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatButton OnClick="@LoginUser" Raised="true">Iniciar sesión</MatButton>
+                </div>
+                <span><a class="redirect" href="@(MyNavigationManager.ToAbsoluteUri("Register"))">¿Aún no estas registrado?</a></span>
+            </MatThemeProvider>
+        </div>
+
+    </div>
+</EditForm>
 @code {
 
+    //Colores del tema del login
+    MatTheme formLogin = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    [Inject]
+    IJSRuntime JS { get; set; }
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+    void Success() =>
+        Helper.MatToastHelper.Show(MatToastType.Success, "Login Correcto", "Login");
+
+    LoginModel myModel = new LoginModel();
+
+    // Usuario y contraseña
+    public class LoginModel
+    {
+        [Required(ErrorMessage ="El campo 'nombre' es obligatorio")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Contraseña' es obligatorio")]
+        [MinLength(8, ErrorMessage="La contraseña debe ser superior a 8 carácteres")]
+        public string Password { get; set; }
+
+    }
+
+
+    private void LoginUser()
+    {
+        Helper.MatToastHelper.Toaster = Toaster;
+        if (string.IsNullOrEmpty(myModel.Username) || string.IsNullOrEmpty(myModel.Password))
+        {
+            Helper.MatToastHelper.Show(MatToastType.Warning, "Debe llenar todos los campos", "Login");
+        }
+    }
 }

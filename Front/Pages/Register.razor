@@ -1,4 +1,119 @@
 ﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Net.Http.Headers
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+<style>
+    .formClass {
+        margin-top: 125px !important;
+        padding: 1rem;
+        max-width: 650px;
+        min-width: 300px;
+    }
+
+    .redirect {
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+</style>
+
+
+<div class="container mb-4 estiloFormulario align-content-center">
+    <EditForm Model="myModel" OnValidSubmit="Success">
+        <DataAnnotationsValidator />
+        <div class="mx-auto my-0 text-center formClass" style="">
+
+            <h2>¡Registrate!</h2>
+            <MatThemeProvider Theme="@formLogin">
+                <p>
+                    <MatTextField Label="Usuario" @bind-Value="myModel.Username" />
+                    <ValidationMessage For="@(() =>myModel.Username)" />
+                </p>
+                <p>
+                    <MatTextField Label="Correo" @bind-Value="myModel.Email" Type="email" />
+                    <ValidationMessage For="@(() => myModel.Email)" />
+
+                </p>
+                <p>
+                    <MatTextField Label="Contraseña" @bind-Value="myModel.Password" Type="password" />
+                    <ValidationMessage For="@(() => myModel.Password)" />
+
+                </p>
+                <p>
+                    <MatTextField Label="Confirmar Contraseña" @bind-Value="myModel.PasswordCon" Type="password" />
+                    <ValidationMessage For="@(() => myModel.PasswordCon)" />
+
+                </p>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatButton Type="submit" Raised="true">Registrarme</MatButton>
+                </div>
+            </MatThemeProvider>
+        </div>
+    </EditForm>
+</div>
+
+
+
+
+
+
+
 @code {
 
+    //Colores del tema del login
+    MatTheme formLogin = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    [Inject]
+    IJSRuntime JS { get; set; }
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        Helper.MatToastHelper.Toaster = Toaster;
+    }
+
+
+    void Success()
+    {
+          Helper.MatToastHelper.Show(MatToastType.Success, "¡Te has registrado correctamente!", "Registro");
+          MyNavigationManager.NavigateTo("/login");
+    }
+  
+
+    RegisterModel myModel = new RegisterModel();
+
+    // Usuario, contraseña, email y confirmar contraseña
+    public class RegisterModel
+    {
+        [Required(ErrorMessage = "El campo 'nombre' es obligatorio")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "El campo 'nombre' es obligatorio")]
+        [RegularExpression("[a-zA-Z0-9_\\.\\+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-\\.]+", ErrorMessage = "Introduce un correo válido")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Contraseña' es obligatorio")]
+        [RegularExpression("^(?=\\w*\\d)(?=\\w*[A-Z])(?=\\w*[a-z])\\S{8,16}$", ErrorMessage = "La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.")]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Contraseña' es obligatorio")]
+        [RegularExpression("^(?=\\w*\\d)(?=\\w*[A-Z])(?=\\w*[a-z])\\S{8,16}$", ErrorMessage = "La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.")]
+        [Compare("Password", ErrorMessage = "Debe ser igual la contraseña introducida")]
+        public string PasswordCon { get; set; }
+    }
+
+    private void RegisterUser()
+    {
+        if (string.IsNullOrEmpty(myModel.Username) || string.IsNullOrEmpty(myModel.Password))
+        {
+            Helper.MatToastHelper.Show(MatToastType.Warning, "Debe llenar todos los campos", "Login");
+        }
+    }
 }

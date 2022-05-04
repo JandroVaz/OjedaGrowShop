@@ -30,37 +30,6 @@
 </style>
 
 
-
-@*
-    <div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">OjedaGrowShop</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-    <span class="navbar-toggler-icon"></span>
-    </button>
-    </div>
-
-    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-    <li class="nav-item px-3">
-    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-    <span class="oi oi-home" aria-hidden="true"></span> Home
-    </NavLink>
-    </li>
-    <li class="nav-item px-3">
-    <NavLink class="nav-link" href="counter">
-    <span class="oi oi-plus" aria-hidden="true"></span> Counter
-    </NavLink>
-    </li>
-    <li class="nav-item px-3">
-    <NavLink class="nav-link" href="fetchdata">
-    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-    </NavLink>
-    </li>
-    </ul>
-    </div>
-*@
-
-
 <div class="container-fluid container__menu rounded-3">
     <img src="images/logotiporeducido.png" alt="" style="width: 75px; margin-right: 25px; border-radius: 50%;">
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,22 +39,22 @@
         <ul class="navbar-nav me-auto  mb-lg-0 gap-2 mt-md-0" style="background-color: #009624 !important; ">
             <li class="enlacesMenu">
                 <NavLink href="" Match="NavLinkMatch.All">
-                    <a class="nav-link w-100" aria-current="page">Home</a>
+                    <span onclick="event.preventDefault;" class="nav-link w-100  text-white" aria-current="page">Home</span>
                 </NavLink>
             </li>
             <li class="enlacesMenu">
                 <NavLink href="counter">
-                    <a class="nav-link  w-100" aria-current="page">Campo</a>
+                    <span onclick="event.preventDefault;"  class="nav-link  w-100  text-white" aria-current="page">Campo</span>
                 </NavLink>
 
             </li>
             <li class="enlacesMenu">
                 <NavLink href="fetchdata">
-                    <a class="nav-link  w-100" aria-current="page">Mascotas</a>
+                    <span onclick="event.preventDefault;"  class="nav-link  w-100  text-white" aria-current="page">Mascotas</span>
                 </NavLink>
             </li>
             <li class="enlacesMenu">
-                <a class="nav-link  w-100" aria-current="page">Contacto</a>
+                <span onclick="event.preventDefault;"  class="nav-link  w-100  text-white" aria-current="page">Contacto</span>
             </li>
 
 
@@ -97,18 +66,18 @@
 
 
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle enlacesMenu" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Iniciar / Registrar
-                </a>
+                </span>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li class="enlacesMenu dropdown-item">
                         <NavLink href="login">
-                            <a class="nav-link  w-100" aria-current="page">Login</a>
+                            <span class="nav-link  w-100" aria-current="page">Login</span>
                         </NavLink>
                     </li>
                     <li class="enlacesMenu dropdown-item">
                         <NavLink href="register">
-                            <a class="nav-link  w-100" aria-current="page">Registrarme</a>
+                            <span class="nav-link  w-100" aria-current="page">Registrarme</span>
                         </NavLink>
                     </li>
                 </ul>
