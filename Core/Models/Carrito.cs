@@ -7,9 +7,9 @@ namespace OjedaGrowShop.EF.Models
 {
     public partial class Carrito
     {
-        public string Id { get; set; }
-        public string Idiusuario { get; set; }
-        public string Idproducto { get; set; }
-        public string Cantidad { get; set; }
+        public int Id { get; set; }
+        public int Idusuario { get; set; }
+        public int Idproducto { get; set; }
+        public int Cantidad { get; set; }
     }
 }

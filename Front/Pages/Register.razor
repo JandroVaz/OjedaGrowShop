@@ -1,9 +1,12 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
 @using System.IO
-@using System.Net.Http.Headers
+@using OjedaGrowShop.EF.Services
+@using OjedaGrowShop.EF.Services.Interfaces
 @inject NavigationManager NavigationManager
 @inject NavigationManager MyNavigationManager
+@inject IUserService UserService;
+
 <style>
     .formClass {
         margin-top: 125px !important;
@@ -20,29 +23,29 @@
 
 
 <div class="container mb-4 estiloFormulario align-content-center">
-    <EditForm Model="myModel" OnValidSubmit="Success">
+    <EditForm Model="userRegi" OnValidSubmit="RegisterUser">
         <DataAnnotationsValidator />
         <div class="mx-auto my-0 text-center formClass" style="">
 
             <h2>¡Registrate!</h2>
             <MatThemeProvider Theme="@formLogin">
                 <p>
-                    <MatTextField Label="Usuario" @bind-Value="myModel.Username" />
-                    <ValidationMessage For="@(() =>myModel.Username)" />
+                    <MatTextField Label="Usuario" @bind-Value="userRegi.Username" />
+                    <ValidationMessage For="@(() =>userRegi.Username)" />
                 </p>
                 <p>
-                    <MatTextField Label="Correo" @bind-Value="myModel.Email" Type="email" />
-                    <ValidationMessage For="@(() => myModel.Email)" />
+                    <MatTextField Label="Correo" @bind-Value="userRegi.Email" Type="email" />
+                    <ValidationMessage For="@(() => userRegi.Email)" />
 
                 </p>
                 <p>
-                    <MatTextField Label="Contraseña" @bind-Value="myModel.Password" Type="password" />
-                    <ValidationMessage For="@(() => myModel.Password)" />
+                    <MatTextField Label="Contraseña" @bind-Value="userRegi.Password" Type="password" />
+                    <ValidationMessage For="@(() => userRegi.Password)" />
 
                 </p>
                 <p>
-                    <MatTextField Label="Confirmar Contraseña" @bind-Value="myModel.PasswordCon" Type="password" />
-                    <ValidationMessage For="@(() => myModel.PasswordCon)" />
+                    <MatTextField Label="Confirmar Contraseña" @bind-Value="userRegi.PasswordCon" Type="password" />
+                    <ValidationMessage For="@(() => userRegi.PasswordCon)" />
 
                 </p>
                 <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
@@ -82,12 +85,12 @@
 
     void Success()
     {
-          Helper.MatToastHelper.Show(MatToastType.Success, "¡Te has registrado correctamente!", "Registro");
-          MyNavigationManager.NavigateTo("/login");
+        Helper.MatToastHelper.Show(MatToastType.Success, "¡Te has registrado correctamente!", "Registro");
+        MyNavigationManager.NavigateTo("/login");
     }
-  
 
-    RegisterModel myModel = new RegisterModel();
+
+    RegisterModel userRegi = new RegisterModel();
 
     // Usuario, contraseña, email y confirmar contraseña
     public class RegisterModel
@@ -109,11 +112,41 @@
         public string PasswordCon { get; set; }
     }
 
-    private void RegisterUser()
+    private async void RegisterUser()
     {
-        if (string.IsNullOrEmpty(myModel.Username) || string.IsNullOrEmpty(myModel.Password))
+        if (string.IsNullOrEmpty(userRegi.Username) || string.IsNullOrEmpty(userRegi.Password))
         {
-            Helper.MatToastHelper.Show(MatToastType.Warning, "Debe llenar todos los campos", "Login");
+            Helper.MatToastHelper.Show(MatToastType.Warning, "Debe llenar todos los campos", "Registro");
         }
+        else
+        {
+            if (await UserService.Exist(userRegi.Email))
+            {
+                Helper.MatToastHelper.Show(MatToastType.Danger, "¡El usuario ya existe!", "Registro");
+            }
+            else
+            {
+                int result = await UserService.AddUser(new EF.Models.User()
+                    {
+                       
+                        Name = userRegi.Username,
+                        Password = userRegi.Password,
+                        Correo = userRegi.Email,
+                        Rol = "cliente"
+                    });
+                if (result > 0)
+                {
+                    Helper.MatToastHelper.Show(MatToastType.Info, "El usuario se ha creado correctamente", "Registro");
+                    MyNavigationManager.NavigateTo("/login");
+                }
+                else
+                {
+                     Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error, contacte con el administrador!", "Registro");
+                }
+            }
+
+
+        }
+
     }
 }

@@ -23,6 +23,8 @@ namespace OjedaGrowShop
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+
                 });
+
     }
 }

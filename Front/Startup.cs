@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OjedaGrowShop.Data;
+using OjedaGrowShop.EF.Models;
+using OjedaGrowShop.EF.Services;
+using OjedaGrowShop.EF.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +44,10 @@ namespace OjedaGrowShop
                 config.MaximumOpacity = 95;
                 config.VisibleStateDuration = 3000;
             });
+            services.AddTransient<IUserService, UserService>(
+                e => new UserService(new OJEDAContext())
+                );
+     
         }
 
         /*MatBlazor*/
