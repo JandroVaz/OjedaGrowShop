@@ -34,6 +34,7 @@ namespace OjedaGrowShop
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddMatBlazor();
+            services.AddProtectedBrowserStorage();
             // MatToaster
             services.AddMatToaster(config =>
             {
@@ -47,7 +48,8 @@ namespace OjedaGrowShop
             services.AddTransient<IUserService, UserService>(
                 e => new UserService(new OJEDAContext())
                 );
-     
+                
+
         }
 
         /*MatBlazor*/

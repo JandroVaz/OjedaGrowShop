@@ -1,4 +1,6 @@
-﻿<style>
+﻿@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
+<style>
 
     .container__menu {
         width: 100%;
@@ -63,8 +65,6 @@
 
 
         <ul class="navbar-nav" style="background-color: #009624 !important; ">
-
-
             <li class="nav-item dropdown">
                 <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Iniciar / Registrar
@@ -104,4 +104,24 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    //Carga del usuario, si el usuario ha conectado
+    //Realiza la carga 
+    private bool isConnected;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await LoadStateAsync();
+            StateHasChanged();
+        }
+    }
+
+    private string? user;
+    private async Task LoadStateAsync()
+    {
+            user = await ProtectedSessionStore.GetAsync<string>("user");   
+    }
+
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.ProtectedBrowserStorage;
 
 namespace OjedaGrowShop.EF.Services
 {
@@ -52,6 +53,24 @@ namespace OjedaGrowShop.EF.Services
             );
         }
 
+        public bool getRolUser(string user)
+        {
+            return __ojedaContext.Users.Any(u => u.Rol == "admin");
+        }
 
+        //Recogemos la ID del usuario actual
+        public int getUserId(string user)
+        {
+            int userId = 0;
+            foreach (var u in __ojedaContext.Users)
+            {
+                if (u.Name == user)
+                {
+                    userId= u.Id;
+                }
+            }
+
+            return userId;
+        }
     }
 }

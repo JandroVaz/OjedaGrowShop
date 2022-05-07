@@ -12,5 +12,8 @@ namespace OjedaGrowShop.EF.Services.Interfaces
         bool Login(string username, string password);
 
         Task<bool> Exist(string correo);
+        public int getUserId(string user);
+        public bool getRolUser(string user);
+
     }
 }

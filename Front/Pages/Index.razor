@@ -1,7 +1,35 @@
 ﻿@page "/"
-
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
+@if (@user != null)
+{
+    <h4>Bienvenido! @user</h4>
+}
+
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code{
+  
+
+    //Realiza la carga 
+    private bool isConnected;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await LoadStateAsync();
+            StateHasChanged();
+        }
+    }
+
+    private string? user;
+    private async Task LoadStateAsync()
+    {
+            user = await ProtectedSessionStore.GetAsync<string>("user");   
+    }
+}

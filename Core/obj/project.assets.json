@@ -11,6 +11,24 @@
           "lib/netstandard2.0/Humanizer.dll": {}
         }
       },
+      "Microsoft.AspNetCore.ProtectedBrowserStorage/0.1.0-alpha.19521.1": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.0/Microsoft.AspNetCore.ProtectedBrowserStorage.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/Microsoft.AspNetCore.ProtectedBrowserStorage.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ],
+        "build": {
+          "buildTransitive/Microsoft.AspNetCore.ProtectedBrowserStorage.props": {}
+        },
+        "buildMultiTargeting": {
+          "buildMultiTargeting/Microsoft.AspNetCore.ProtectedBrowserStorage.props": {}
+        }
+      },
       "Microsoft.CSharp/4.7.0": {
         "type": "package",
         "compile": {
@@ -287,6 +305,25 @@
         "lib/netstandard2.0/Humanizer.dll",
         "lib/netstandard2.0/Humanizer.xml",
         "logo.png"
+      ]
+    },
+    "Microsoft.AspNetCore.ProtectedBrowserStorage/0.1.0-alpha.19521.1": {
+      "sha512": "P81qtHhl6KXr+TCm5qfCxkhFxkGtALmY3bNcraKX6rPGMbPMBGi9mIeCyUZVmpzIVkD1ocUfuRqiob05jR3hUA==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.protectedbrowserstorage/0.1.0-alpha.19521.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "build/Microsoft.AspNetCore.ProtectedBrowserStorage.props",
+        "build/Microsoft.AspNetCore.StaticWebAssets.props",
+        "buildMultiTargeting/Microsoft.AspNetCore.ProtectedBrowserStorage.props",
+        "buildTransitive/Microsoft.AspNetCore.ProtectedBrowserStorage.props",
+        "lib/netcoreapp3.0/Microsoft.AspNetCore.ProtectedBrowserStorage.dll",
+        "lib/netcoreapp3.0/Microsoft.AspNetCore.ProtectedBrowserStorage.pdb",
+        "microsoft.aspnetcore.protectedbrowserstorage.0.1.0-alpha.19521.1.nupkg.sha512",
+        "microsoft.aspnetcore.protectedbrowserstorage.nuspec",
+        "staticwebassets/protectedBrowserStorage.js"
       ]
     },
     "Microsoft.CSharp/4.7.0": {
@@ -848,6 +885,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "Microsoft.AspNetCore.ProtectedBrowserStorage >= 0.1.0-alpha.19521.1",
       "Microsoft.EntityFrameworkCore >= 5.0.14",
       "Microsoft.EntityFrameworkCore.Relational >= 5.0.14",
       "Microsoft.EntityFrameworkCore.Tools >= 5.0.14",
@@ -898,6 +936,10 @@
       "netcoreapp3.1": {
         "targetAlias": "netcoreapp3.1",
         "dependencies": {
+          "Microsoft.AspNetCore.ProtectedBrowserStorage": {
+            "target": "Package",
+            "version": "[0.1.0-alpha.19521.1, )"
+          },
           "Microsoft.EntityFrameworkCore": {
             "target": "Package",
             "version": "[5.0.14, )"
