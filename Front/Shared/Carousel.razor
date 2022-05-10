@@ -11,7 +11,7 @@
 }
 else
 {
-    <div data-aos="fade-down"
+    <div data-aos="fade-right"
      data-aos-easing="linear"
      data-aos-duration="1500" id="carouselExampleCaptions" class="carousel slide my-0 mx-auto mb-3" style="width:95%; max-width:920px;" data-bs-ride="carousel">
         @*Botones del carrusel congeneracion dinamica   *@
@@ -38,10 +38,10 @@ else
                 if (i == 0)
                 {
                     <div class="carousel-item active">
-                        <img src="@listImg[i]" class="d-block w-100" alt="@files.FirstOrDefault().Name">
+                        <img src="@files[i].Base64" class="d-block w-100" alt="@files.FirstOrDefault().Name">
                         <div class="carousel-caption d-none d-md-block">
-                            <h5>@files.FirstOrDefault().Name</h5>
-                            <p>Autor: Andrés Lopez Dominguez</p>
+                           @* <h5>@files.FirstOrDefault().Name</h5>
+                            <p>Autor: Andrés Lopez Dominguez</p>*@
                         </div>
                     </div>
                 }
@@ -49,10 +49,10 @@ else
                 {
                     <div class="carousel-item">
                         @*<img src="data:image/@files[i].Type;base64, @files[i].Base64" class="d-block w-100" alt="@files[i].Name">*@
-                        <img src="@listImg[i]" class="d-block w-100" alt="@files[i].Name">
+                        <img src="@files[i].Base64" class="d-block w-100" alt="@files[i].Name">
                         <div class="carousel-caption d-none d-md-block">
-                            <h5>@files[i].Name</h5>
-                            <p>Autor: Andrés Lopez Dominguez</p>
+                           @* <h5>@files[i].Name</h5>
+                            <p>Autor: Andrés Lopez Dominguez</p>*@
                         </div>
                     </div>
                 }

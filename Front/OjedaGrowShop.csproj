@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Helper\AuthorizationHelper.cs" />
+    <Compile Include="Helper\MatToastHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MatBlazor" Version="2.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.ProtectedBrowserStorage" Version="0.1.0-alpha.19521.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />

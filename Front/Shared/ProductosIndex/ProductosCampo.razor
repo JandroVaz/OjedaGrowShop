@@ -1,5 +1,77 @@
-﻿<h3>Planta, cuida y cosecha.</h3>
-<h4>¡Los mejores productos a tu disposición!</h4>
+﻿<style>
+    .card {
+        box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+        min-width:250px;
+        max-width:350px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="mt-5 mb-5">
+    <div class="row">
+        <h3 data-aos="fade-right" >Planta, cuida y cosecha.</h3>
+        <h4 data-aos="fade-left">¡Los mejores productos a tu disposición!</h4>
+    </div>
+    <MatThemeProvider Theme="@cardShopIndex">
+        <div class="row justify-content-center gap-3 mt-4 mb-4 ">
+            @for (var i = 0; i < 3; i++)
+            {
+                <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
+
+                    <MatCard class="demo-mat-card card">
+                        <MatCardContent>
+                            <MatCardMedia Wide="true" ImageUrl="https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg"></MatCardMedia>
+                            <div class="demo-mat-card-content">
+                                <MatHeadline6 class="demo-mat-card-clean-margin">
+                                    Our Changing Planet
+                                </MatHeadline6>
+                                <MatSubtitle2 class="demo-mat-card-clean-margin">
+                                    by Kurt Wagner
+                                </MatSubtitle2>
+                            </div>
+
+                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
+                                Visit ten places on our planet that are undergoing the biggest changes today.
+                            </MatBody2>
+                        </MatCardContent>
+                        <MatCardActions>
+
+                            <MatCardActionIcons>
+                                <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                            </MatCardActionIcons>
+                        </MatCardActions>
+                    </MatCard>
+                </div>
+            }
+
+        </div>
+    </MatThemeProvider>
+</div>
+
+@*Estilos de las cartas*@
+
 @code {
 
+    [Inject]
+    IJSRuntime JS { get; set; }
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+    MatTheme cardShopIndex = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    protected override void OnInitialized()
+    {
+        Helper.MatToastHelper.Toaster = Toaster;
+    }
+
+
+    public void anadirCarro()
+    {
+                    Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+
+    }
 }

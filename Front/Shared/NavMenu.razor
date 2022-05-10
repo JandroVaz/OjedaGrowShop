@@ -45,18 +45,20 @@
                 </NavLink>
             </li>
             <li class="enlacesMenu">
-                <NavLink href="counter">
-                    <span onclick="event.preventDefault;"  class="nav-link  w-100  text-white" aria-current="page">Campo</span>
+                <NavLink href="campo">
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white" aria-current="page">Campo</span>
                 </NavLink>
 
             </li>
             <li class="enlacesMenu">
-                <NavLink href="fetchdata">
-                    <span onclick="event.preventDefault;"  class="nav-link  w-100  text-white" aria-current="page">Mascotas</span>
+                <NavLink href="mascotas">
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white" aria-current="page">Mascotas</span>
                 </NavLink>
             </li>
             <li class="enlacesMenu">
-                <span onclick="event.preventDefault;"  class="nav-link  w-100  text-white" aria-current="page">Contacto</span>
+                <NavLink href="contacto">
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white" aria-current="page">Contacto</span>
+                </NavLink>
             </li>
 
 
@@ -88,13 +90,6 @@
 </div>
 
 
-
-
-
-
-
-
-
 @code {
     private bool collapseNavMenu = true;
 
@@ -106,7 +101,7 @@
     }
 
     //Carga del usuario, si el usuario ha conectado
-    //Realiza la carga 
+    //Realiza la carga
     private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -121,7 +116,7 @@
     private string? user;
     private async Task LoadStateAsync()
     {
-            user = await ProtectedSessionStore.GetAsync<string>("user");   
+        user = await ProtectedSessionStore.GetAsync<string>("user");
     }
 
 }
