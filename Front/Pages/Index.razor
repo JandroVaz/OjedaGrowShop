@@ -1,21 +1,30 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex;
 @inject ProtectedSessionStorage ProtectedSessionStore
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<div class="container text-center">
 
-@if (@user != null)
-{
-    <h4>Bienvenido! @user</h4>
-}
+    @if (@user != null)
+    {
+        <h2>Bienvenido a OjedaGrowShop! @user</h2>
+    }
+    else
+    {
+        <h2>Bienvenido a OjedaGrowShop!</h2>
+    }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <Carousel></Carousel>
 
-@code{
-  
+    <ProductosCampo></ProductosCampo>
+    <ProductosMascota></ProductosMascota>
+</div>
 
-    //Realiza la carga 
+
+@code {
+
+
+    //Realiza la carga
     private bool isConnected;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -30,6 +39,6 @@ Welcome to your new app.
     private string? user;
     private async Task LoadStateAsync()
     {
-            user = await ProtectedSessionStore.GetAsync<string>("user");   
+        user = await ProtectedSessionStore.GetAsync<string>("user");
     }
 }

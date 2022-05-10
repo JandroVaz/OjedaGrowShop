@@ -48,7 +48,8 @@ namespace OjedaGrowShop
             services.AddTransient<IUserService, UserService>(
                 e => new UserService(new OJEDAContext())
                 );
-                
+            services.AddTransient<IPhotoService, PhotoService>();
+
 
         }
 
