@@ -1,16 +1,45 @@
 ﻿@page "/campo"
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosCampo;
+@inject ProtectedSessionStorage ProtectedSessionStore
 
-<h1>Campo</h1>
+<div class="container">
+    <div class="row text-center mt-5 mb-5">
+        <h2>Productos para el campo</h2>
+    </div>
+    <MatThemeProvider Theme="colorCard">
+        <ProductosTienda></ProductosTienda>
+    </MatThemeProvider>
+</div>
 
-<p>Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    //Realiza la carga
+    private bool isConnected;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        currentCount++;
+        if (firstRender)
+        {
+            isConnected = true;
+            await LoadStateAsync();
+            StateHasChanged();
+        }
     }
+
+    private string? user;
+    private async Task LoadStateAsync()
+    {
+        user = await ProtectedSessionStore.GetAsync<string>("user");
+    }
+
+       //Colores del tema del login
+    MatTheme colorCard = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    
 }

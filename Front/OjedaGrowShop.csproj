@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Compile Include="Helper\AuthorizationHelper.cs" />
+    <Compile Include="Helper\Mascotas.cs" />
     <Compile Include="Helper\MatToastHelper.cs" />
   </ItemGroup>
 
@@ -26,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Shared\Contacto\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 

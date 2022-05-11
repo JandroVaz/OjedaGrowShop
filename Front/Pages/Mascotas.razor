@@ -1,46 +1,50 @@
 ﻿@page "/mascotas"
-
 @using OjedaGrowShop.Data
 @inject WeatherForecastService ForecastService
+@using OjedaGrowShop.Shared.ProductosMascota;
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
 
-<h1>Weather forecast</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<div class="container">
+    <div class="row text-center mt-5 mb-5">
+        <h2>¡Productos para tu mascota!</h2>
+    </div>
+    <MatThemeProvider Theme="colorCard">
+        <ProductosTienda></ProductosTienda>
+        <AdoptaMascota></AdoptaMascota>
+    </MatThemeProvider>
+</div>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+
+
+
 
 @code {
-    private WeatherForecast[] forecasts;
-
-    protected override async Task OnInitializedAsync()
+        //Realiza la carga
+    private bool isConnected;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        if (firstRender)
+        {
+            isConnected = true;
+            await LoadStateAsync();
+            StateHasChanged();
+        }
     }
+
+    private string? user;
+    private async Task LoadStateAsync()
+    {
+        user = await ProtectedSessionStore.GetAsync<string>("user");
+    }
+
+       //Colores del tema del login
+    MatTheme colorCard = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    
 }
