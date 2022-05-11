@@ -1,0 +1,45 @@
+﻿@page "/campo"
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosCampo;
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+<div class="container">
+    <div class="row text-center mt-5 mb-5">
+        <h2>Productos para el campo</h2>
+    </div>
+    <MatThemeProvider Theme="colorCard">
+        <ProductosTienda></ProductosTienda>
+    </MatThemeProvider>
+</div>
+
+
+
+
+@code {
+    //Realiza la carga
+    private bool isConnected;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await LoadStateAsync();
+            StateHasChanged();
+        }
+    }
+
+    private string? user;
+    private async Task LoadStateAsync()
+    {
+        user = await ProtectedSessionStore.GetAsync<string>("user");
+    }
+
+       //Colores del tema del login
+    MatTheme colorCard = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    
+}

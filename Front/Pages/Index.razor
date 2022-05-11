@@ -1,0 +1,42 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex;
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+<div class="container text-center">
+
+    @if (@user != null)
+    {
+        <h1 data-aos="zoom-in" class="mt-4 mb-5">¡Bienvenido a OjedaGrowShop! @user</h1>
+    }
+    else
+    {
+        <h1 data-aos="zoom-in"  class="mt-4 mb-5">¡Bienvenido a OjedaGrowShop!</h1>
+    }
+
+    <Carousel></Carousel>
+    <ProductosCampo></ProductosCampo>
+    <ProductosMascota></ProductosMascota>
+</div>
+
+
+@code {
+
+    //Realiza la carga
+    private bool isConnected;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isConnected = true;
+            await LoadStateAsync();
+            StateHasChanged();
+        }
+    }
+
+    private string? user;
+    private async Task LoadStateAsync()
+    {
+        user = await ProtectedSessionStore.GetAsync<string>("user");
+    }
+}
