@@ -8,6 +8,10 @@
 @inject NavigationManager MyNavigationManager
 @using Microsoft.AspNetCore.ProtectedBrowserStorage
 @inject ProtectedSessionStorage ProtectedSessionStore
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
+@using OjedaGrowShop.EF.Services
+
 
 <style>
     .formClass {
@@ -24,7 +28,17 @@
     }
 </style>
 
-<EditForm Model="userLogin" OnValidSubmit="@LoginUser">
+@*Si estas logeado no te deja volver a logearte*@
+@if(authorizationHelper.IsAdmin){
+    MyNavigationManager.NavigateTo("/");
+}
+
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #009624 !important; z-index:100;">
+        <NavMenu />
+</nav>
+
+<EditForm Model="userLogin" OnValidSubmit="@LoginUser" style="margin-bottom:42px;">
     <DataAnnotationsValidator />
 
     <div class="container mb-4 estiloFormulario align-content-center">
@@ -47,7 +61,7 @@
                 <span><a class="redirect" href="@(MyNavigationManager.ToAbsoluteUri("Register"))">¿Aún no estas registrado?</a></span>
             </MatThemeProvider>
         </div>
-
+       
     </div>
 </EditForm>
 @code {
@@ -96,13 +110,9 @@
                 //Guardamos en el localStorage
 
                 await ProtectedSessionStore.SetAsync("user", userLogin.Username);
-
-                await ProtectedSessionStore.SetAsync("userRol", UserService.getRolUser(userLogin.Username));
-
+                authorizationHelper.IsAdmin = UserService.getRolUser(userLogin.Username);
                 await ProtectedSessionStore.SetAsync("userId", UserService.getUserId(userLogin.Username));
-                
-                //var usuarioLogeado = await  ProtectedSessionStore.GetAsync<string>("user");
-                //Helper.MatToastHelper.Show(MatToastType.Warning, usuarioLogeado, "Login");
+
                 MyNavigationManager.NavigateTo("/");
             }
             else

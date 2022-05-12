@@ -1,6 +1,15 @@
 ﻿@page "/contacto"
+@using OjedaGrowShop.Shared.Contacto;
 
-<h3>Contacto</h3>
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+        <NavMenu />
+</nav>
+
+<div class="container gap-4">
+    <QuienesSomos></QuienesSomos>
+    <ContactoMessage></ContactoMessage>
+</div>
 
 @code {
 

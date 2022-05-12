@@ -1,5 +1,10 @@
 ﻿@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using Microsoft.Extensions.Logging
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
 @inject ProtectedSessionStorage ProtectedSessionStore
+
+
 <style>
 
     .container__menu {
@@ -60,12 +65,11 @@
                     <span onclick="event.preventDefault;" class="nav-link  w-100  text-white" aria-current="page">Contacto</span>
                 </NavLink>
             </li>
-
-
         </ul>
 
 
-
+        @if(!authorizationHelper.IsAdmin)
+            {
         <ul class="navbar-nav" style="background-color: #009624 !important; ">
             <li class="nav-item dropdown">
                 <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,7 +89,23 @@
                 </ul>
             </li>
         </ul>
+        }else{
+            <ul class="navbar-nav" style="background-color: #009624 !important; ">
+            <li class="nav-item dropdown">
+                <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    @user
+                </span>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li class="enlacesMenu dropdown-item">
+                        <NavLink href="">
+                            <span class="nav-link  w-100" aria-current="page" @onclick="LogOut">Salir</span>
+                        </NavLink>
+                    </li>
 
+                </ul>
+            </li>
+        </ul>
+        }
     </div>
 </div>
 
@@ -95,6 +115,9 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+     [Inject]
+    public IMatToaster Toaster { get; set; }
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
@@ -103,6 +126,7 @@
     //Carga del usuario, si el usuario ha conectado
     //Realiza la carga
     private bool isConnected;
+    private bool userRol;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -110,6 +134,7 @@
             isConnected = true;
             await LoadStateAsync();
             StateHasChanged();
+
         }
     }
 
@@ -117,6 +142,20 @@
     private async Task LoadStateAsync()
     {
         user = await ProtectedSessionStore.GetAsync<string>("user");
+        StateHasChanged();
+    }
+
+    //protected override Task OnInitializedAsync()
+    //{
+    //    authorizationHelper.EventCallback = LoadStateAsync;
+    //}
+
+    public async Task LogOut()
+    {
+        authorizationHelper.IsAdmin = false;
+        await ProtectedSessionStore.DeleteAsync("user");
+        await ProtectedSessionStore.DeleteAsync("userId");
+        Helper.MatToastHelper.Show(MatToastType.Info, "Se ha cerrado sesión correctamente.", "Log Out");
     }
 
 }
