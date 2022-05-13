@@ -1,24 +1,29 @@
 ﻿<style>
     .card {
         box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
-        min-width:250px;
-        max-width:350px;
+        width:100% !important;
+        min-width:200px !important;
+        max-width:350px !important;
         margin: 0 auto;
     }
+
+    @@media screen and (max-width:720px;){
+        
+    } 
 </style>
 
-<div class="mt-5 mb-5">
+<div class="mt-5 mb-5 overflow-hidden">
     <div class="row">
         <h3 data-aos="fade-right" >Planta, cuida y cosecha.</h3>
         <h4 data-aos="fade-left">¡Los mejores productos a tu disposición!</h4>
     </div>
     <MatThemeProvider Theme="@cardShopIndex">
-        <div class="row justify-content-center gap-3 mt-4 mb-4 ">
+        <div class="row justify-content-center gap-3 mt-4 mb-4">
             @for (var i = 0; i < 3; i++)
             {
                 <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
 
-                    <MatCard class="demo-mat-card card">
+                    <MatCard class="demo-mat-card  mx-auto mx-0 card">
                         <MatCardContent>
                             <MatCardMedia Wide="true" ImageUrl="https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg"></MatCardMedia>
                             <div class="demo-mat-card-content">

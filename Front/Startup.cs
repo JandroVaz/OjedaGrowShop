@@ -10,6 +10,7 @@ using OjedaGrowShop.Data;
 using OjedaGrowShop.EF.Models;
 using OjedaGrowShop.EF.Services;
 using OjedaGrowShop.EF.Services.Interfaces;
+using OjedaGrowShop.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,8 +50,7 @@ namespace OjedaGrowShop
                 e => new UserService(new OJEDAContext())
                 );
             services.AddTransient<IPhotoService, PhotoService>();
-
-
+            services.AddScoped<AuthorizationHelper>();
         }
 
         /*MatBlazor*/

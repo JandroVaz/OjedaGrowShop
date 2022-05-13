@@ -6,6 +6,13 @@
 @inject NavigationManager NavigationManager
 @inject NavigationManager MyNavigationManager
 @inject IUserService UserService;
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
+
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+        <NavMenu />
+</nav>
 
 <style>
     .formClass {
@@ -20,6 +27,10 @@
         font-size: 0.9rem;
     }
 </style>
+@*Si estas logeado no te deja registrarte*@
+@if(authorizationHelper.IsAdmin){
+    MyNavigationManager.NavigateTo("/");
+}
 
 
 <div class="container mb-4 estiloFormulario align-content-center">
