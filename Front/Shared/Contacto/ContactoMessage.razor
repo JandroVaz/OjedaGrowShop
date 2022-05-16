@@ -3,7 +3,8 @@
 @using OjedaGrowShop.EF.Services
 @using OjedaGrowShop.EF.Services.Interfaces
 @inject NavigationManager NavigationManager
-
+@using OjedaGrowShop.Helper;
+@inject MailServices mailServices;
 <style>
     .formClass {
         
@@ -20,7 +21,7 @@
             </div>
             <div class="row text-center mx-auto my-0">
                 <div class="mx-auto my-0 formClass text-center">
-                    <EditForm Model="sendUserMessage" OnInvalidSubmit="SendMessage">
+                    <EditForm Model="sendUserMessage">
                         <DataAnnotationsValidator />
                         <div>
                             <MatTextField Label="Correo" @bind-Value="sendUserMessage.Email" Type="email" />
@@ -31,7 +32,7 @@
                             <ValidationMessage For="@(() => sendUserMessage.Message)" />
                         </div>
                         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
-                            <MatButton Type="submit" Raised="true">Registrarme</MatButton>
+                            <MatButton Type="submit" Raised="true" OnClick="SendMessage">Enviar Mensaje</MatButton>
                         </div>
                     </EditForm>
 
@@ -70,8 +71,12 @@
         public string Message { get; set; }
     }
 
-    private async void SendMessage()
+    private void SendMessage()
     {
-
+        sendUserMessage.Message = $"El usuario con el correo: {sendUserMessage.Email} <br/>Le ha envíado el siguiente mensaje:<br/> {sendUserMessage.Message}";
+        mailServices.SendEmailOutlook("ojedagrowshop@outlook.es",sendUserMessage.Message);
+        Helper.MatToastHelper.Show(MatToastType.Info, "Mensaje Enviado Correctamente", "Envio de mensaje");
+        sendUserMessage.Email = string.Empty;
+        sendUserMessage.Message = string.Empty;
     }
 }

@@ -24,3 +24,16 @@ E:\Proyectos CSharp Blazor\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowS
 E:\Proyectos CSharp Blazor\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.dll
 E:\Proyectos CSharp Blazor\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.pdb
 E:\Proyectos CSharp Blazor\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.genruntimeconfig.cache
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\bin\Debug\netcoreapp3.1\OjedaGrowShop.EF.deps.json
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\bin\Debug\netcoreapp3.1\OjedaGrowShop.EF.runtimeconfig.json
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\bin\Debug\netcoreapp3.1\OjedaGrowShop.EF.runtimeconfig.dev.json
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\bin\Debug\netcoreapp3.1\OjedaGrowShop.EF.dll
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\bin\Debug\netcoreapp3.1\OjedaGrowShop.EF.pdb
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.csproj.AssemblyReference.cache
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.AssemblyInfoInputs.cache
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.AssemblyInfo.cs
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.csproj.CoreCompileInputs.cache
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.dll
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.pdb
+C:\Users\alezx\source\repos\OjedaGrowShop\Core\obj\Debug\netcoreapp3.1\OjedaGrowShop.EF.genruntimeconfig.cache

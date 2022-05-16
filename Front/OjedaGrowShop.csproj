@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <Compile Include="Helper\AuthorizationHelper.cs" />
+    <Compile Include="Helper\JSHelper.cs" />
+    <Compile Include="Helper\MailServices.cs" />
     <Compile Include="Helper\Mascotas.cs" />
     <Compile Include="Helper\MatToastHelper.cs" />
   </ItemGroup>

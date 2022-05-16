@@ -51,6 +51,7 @@ namespace OjedaGrowShop
                 );
             services.AddTransient<IPhotoService, PhotoService>();
             services.AddScoped<AuthorizationHelper>();
+            services.AddSingleton<MailServices>();
         }
 
         /*MatBlazor*/
