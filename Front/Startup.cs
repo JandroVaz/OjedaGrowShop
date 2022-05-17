@@ -14,6 +14,7 @@ using OjedaGrowShop.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace OjedaGrowShop
@@ -49,9 +50,24 @@ namespace OjedaGrowShop
             services.AddTransient<IUserService, UserService>(
                 e => new UserService(new OJEDAContext())
                 );
+
             services.AddTransient<IPhotoService, PhotoService>();
             services.AddScoped<AuthorizationHelper>();
             services.AddSingleton<MailServices>();
+            // Server Side Blazor doesn't register HttpClient by default
+            if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
+            {
+                // Setup HttpClient for server side in a client side compatible fashion
+                services.AddScoped<HttpClient>(s =>
+                {
+                    // Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
+                    var uriHelper = s.GetRequiredService<NavigationManager>();
+                    return new HttpClient
+                    {
+                        BaseAddress = new Uri(uriHelper.BaseUri)
+                    };
+                });
+            }
         }
 
         /*MatBlazor*/

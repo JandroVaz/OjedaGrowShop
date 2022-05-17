@@ -6,6 +6,8 @@ namespace OjedaGrowShop.Helper
     {
         public bool IsAdmin { get; set; } = false;
 
+        public bool IsLoged { get; set; } = false;
+
         public EventCallback<bool> EventCallback { get; set; }
     }
 

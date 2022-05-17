@@ -1,0 +1,122 @@
+﻿@page "/listUser"
+@using OjedaGrowShop.EF.Models
+@using OjedaGrowShop.EF.Services
+@using OjedaGrowShop.EF.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+@inject IUserService UserService;
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex;
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+    <NavMenu />
+</nav>
+
+<div class="container mt-4 mb-4" style="height:650px;">
+    <div class="row">
+        <h2>Listado de usuarios</h2>
+    </div>
+
+    @if (users == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <MatThemeProvider Theme="@styleTable">
+            <MatTable Items="@usuarios" class="mat-elevation-z5" Style="max-width:750x;">
+                <MatTableHeader>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Modificar</th>
+                    <th>Borrar</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Id</td>
+                    <td>@context.Name</td>
+                    <td>@context.Correo</td>
+                    <td>@context.Rol</td>
+
+                    @if (!@context.Correo.Equals("jandrovaz99@gmail.com"))
+                    {
+                    <td><a class="btn btn-primary" href="/modifyUser/@context.Id">Modificar</a></td>
+                    }
+                @if (!@context.Correo.Equals("jandrovaz99@gmail.com"))
+                    {
+                    <td>
+                        <MatThemeProvider Theme="@delete">
+                            <MatButton Icon="close"
+                                   OnClick="@(async() =>
+                                        {await UserService.DeleteUser(@context.Id);
+                                         users = await UserService.GetAllUser();
+                                         usuarios = users.ToArray();
+                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El usuario se ha borraco correctamente!", "Eliminar");})"
+                                   Raised="true">Borrar</MatButton>
+                        </MatThemeProvider>
+                    </td>
+                    }
+
+            </MatTableRow>
+        </MatTable>
+        <MatButton Type="submit" Raised="true" Link="/panelAdmin">Volver</MatButton>
+    </MatThemeProvider>
+    }
+</div>
+
+
+
+
+@code {
+    public IEnumerable<User> users { get; set; }
+    public string Message { get; set; }
+
+    MatTheme delete = new MatTheme()
+        {
+            Primary = "#c62828",
+        };
+
+    MatTheme styleTable = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    //dialog
+    bool dialogIsOpen = false;
+    void OpenDialog()
+    {
+
+        dialogIsOpen = true;
+    }
+
+
+    User[] usuarios;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            users = await UserService.GetAllUser();
+            usuarios = users.ToArray();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+
+    protected override void OnInitialized()
+    {
+        if (!authorizationHelper.IsAdmin)
+        {
+            MyNavigationManager.NavigateTo("/");
+        }
+    }
+
+}

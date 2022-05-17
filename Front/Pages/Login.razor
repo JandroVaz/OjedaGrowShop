@@ -29,9 +29,9 @@
 </style>
 
 @*Si estas logeado no te deja volver a logearte*@
-@if(authorizationHelper.IsAdmin){
+@if(authorizationHelper.IsLoged){
     MyNavigationManager.NavigateTo("/");
-}
+}else{
 
 
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #009624 !important; z-index:100;">
@@ -64,6 +64,7 @@
        
     </div>
 </EditForm>
+}
 @code {
 
     //Colores del tema del login
@@ -112,7 +113,7 @@
                 await ProtectedSessionStore.SetAsync("user", userLogin.Username);
                 authorizationHelper.IsAdmin = UserService.getRolUser(userLogin.Username);
                 await ProtectedSessionStore.SetAsync("userId", UserService.getUserId(userLogin.Username));
-
+                authorizationHelper.IsLoged = true;
                 MyNavigationManager.NavigateTo("/");
             }
             else

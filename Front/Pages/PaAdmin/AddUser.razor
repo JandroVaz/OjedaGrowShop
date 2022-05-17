@@ -1,4 +1,4 @@
-﻿@page "/register"
+﻿@page "/addUser"
 @using System.ComponentModel.DataAnnotations
 @using System.IO
 @using OjedaGrowShop.EF.Services
@@ -8,11 +8,9 @@
 @inject IUserService UserService;
 @using OjedaGrowShop.Helper
 @inject AuthorizationHelper authorizationHelper
-
-
-<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
-        <NavMenu />
-</nav>
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex;
+@inject ProtectedSessionStorage ProtectedSessionStore
 
 <style>
     .formClass {
@@ -27,54 +25,55 @@
         font-size: 0.9rem;
     }
 </style>
-@*Si estas logeado no te deja registrarte*@
-@if(authorizationHelper.IsLoged){
-    MyNavigationManager.NavigateTo("/");
-}
 
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+    <NavMenu />
+</nav>
 
 <div class="container mb-4 estiloFormulario align-content-center">
-    <EditForm Model="userRegi" OnValidSubmit="RegisterUser">
+    <EditForm Model="addUser" OnValidSubmit="AddNewUser">
         <DataAnnotationsValidator />
         <div class="mx-auto my-0 text-center formClass" style="">
 
-            <h2>¡Registrate!</h2>
+            <h2>Agregar nuevo usuario</h2>
             <MatThemeProvider Theme="@formLogin">
                 <p>
-                    <MatTextField Label="Usuario" @bind-Value="userRegi.Username" />
-                    <ValidationMessage For="@(() =>userRegi.Username)" />
+                    <MatTextField Label="Usuario" @bind-Value="addUser.Username" />
+                    <ValidationMessage For="@(() =>addUser.Username)" />
                 </p>
                 <p>
-                    <MatTextField Label="Correo" @bind-Value="userRegi.Email" Type="email" />
-                    <ValidationMessage For="@(() => userRegi.Email)" />
+                    <MatTextField Label="Correo" @bind-Value="addUser.Email" Type="email" />
+                    <ValidationMessage For="@(() => addUser.Email)" />
 
                 </p>
                 <p>
-                    <MatTextField Label="Contraseña" @bind-Value="userRegi.Password" Type="password" />
-                    <ValidationMessage For="@(() => userRegi.Password)" />
+                    <MatTextField Label="Contraseña" @bind-Value="addUser.Password" Type="password" />
+                    <ValidationMessage For="@(() => addUser.Password)" />
 
                 </p>
                 <p>
-                    <MatTextField Label="Confirmar Contraseña" @bind-Value="userRegi.PasswordCon" Type="password" />
-                    <ValidationMessage For="@(() => userRegi.PasswordCon)" />
+                    <MatTextField Label="Confirmar Contraseña" @bind-Value="addUser.PasswordCon" Type="password" />
+                    <ValidationMessage For="@(() => addUser.PasswordCon)" />
 
                 </p>
+                <p>
+                    <MatSelect Label="Rol para el usuario" @bind-Value="addUser.Rol">
+                        <MatOptionString Value="cliente">Cliente</MatOptionString>
+                        <MatOptionString Value="admin">Admin</MatOptionString>
+                    </MatSelect>
+                    <ValidationMessage For="@(() => addUser.Rol)" />
+                </p>
+
                 <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
                     <MatButton Type="submit" Raised="true">Registrarme</MatButton>
+                     <MatButton Type="submit" Raised="true" Link="/panelAdmin" >Volver</MatButton>
                 </div>
             </MatThemeProvider>
         </div>
     </EditForm>
 </div>
-
-
-
-
-
-
-
 @code {
-
     //Colores del tema del login
     MatTheme formLogin = new MatTheme()
         {
@@ -90,7 +89,14 @@
 
     protected override void OnInitialized()
     {
-        Helper.MatToastHelper.Toaster = Toaster;
+        if (!authorizationHelper.IsAdmin)
+        {
+            MyNavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Helper.MatToastHelper.Toaster = Toaster;
+        }
     }
 
 
@@ -101,7 +107,7 @@
     }
 
 
-    RegisterModel userRegi = new RegisterModel();
+    RegisterModel addUser = new RegisterModel();
 
     // Usuario, contraseña, email y confirmar contraseña
     public class RegisterModel
@@ -121,17 +127,20 @@
         [RegularExpression("^(?=\\w*\\d)(?=\\w*[A-Z])(?=\\w*[a-z])\\S{8,16}$", ErrorMessage = "La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.")]
         [Compare("Password", ErrorMessage = "Debe ser igual la contraseña introducida")]
         public string PasswordCon { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Rol' es obligatorio")]
+        public string Rol { get; set; }
     }
 
-    private async void RegisterUser()
+    private async void AddNewUser()
     {
-        if (string.IsNullOrEmpty(userRegi.Username) || string.IsNullOrEmpty(userRegi.Password))
+        if (string.IsNullOrEmpty(addUser.Username) || string.IsNullOrEmpty(addUser.Password))
         {
             Helper.MatToastHelper.Show(MatToastType.Warning, "Debe llenar todos los campos", "Registro");
         }
         else
         {
-            if (await UserService.Exist(userRegi.Email))
+            if (await UserService.Exist(addUser.Email))
             {
                 Helper.MatToastHelper.Show(MatToastType.Danger, "¡El usuario ya existe!", "Registro");
             }
@@ -139,20 +148,20 @@
             {
                 int result = await UserService.AddUser(new EF.Models.User()
                     {
-                       
-                        Name = userRegi.Username,
-                        Password = userRegi.Password,
-                        Correo = userRegi.Email,
-                        Rol = "cliente"
+
+                        Name = addUser.Username,
+                        Password = addUser.Password,
+                        Correo = addUser.Email,
+                        Rol = addUser.Rol
                     });
                 if (result > 0)
                 {
                     Helper.MatToastHelper.Show(MatToastType.Info, "El usuario se ha creado correctamente", "Registro");
-                    MyNavigationManager.NavigateTo("/login");
+                    MyNavigationManager.NavigateTo("/panelAdmin");
                 }
                 else
                 {
-                     Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error, contacte con el administrador!", "Registro");
+                    Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error, contacte con el administrador!", "Registro");
                 }
             }
 
@@ -160,4 +169,6 @@
         }
 
     }
+
+
 }

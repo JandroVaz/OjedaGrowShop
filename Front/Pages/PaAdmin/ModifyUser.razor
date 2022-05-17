@@ -1,0 +1,94 @@
+﻿@page "/modifyUser/{id:int}"
+@using OjedaGrowShop.EF.Models
+@using OjedaGrowShop.EF.Services
+@using OjedaGrowShop.EF.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+@inject IUserService UserService;
+@using OjedaGrowShop.Helper
+@using System.ComponentModel.DataAnnotations
+@inject AuthorizationHelper authorizationHelper
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex;
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+    <NavMenu />
+</nav>
+
+<div class="container mb-4 mt-4 estiloFormulario align-content-center" style="height:650px;">
+    <EditForm Model="@user">
+        <DataAnnotationsValidator />
+        <div class="mx-auto my-0 text-center formClass" style="">
+
+            <h2>Modificar usuario</h2>
+            <MatThemeProvider Theme="@formLogin">
+                <p>
+                    <MatTextField Label="Usuario" @bind-Value=" user.Name" />
+                    <ValidationMessage For="@(() =>user.Name)" />
+                </p>
+                <p>
+                    <MatTextField Label="Correo" @bind-Value=" user.Correo" Type="email" />
+                    <ValidationMessage For="@(() => user.Correo)" />
+
+                </p>
+                <p>
+                    <MatSelect Label="Rol para el usuario" @bind-Value=" user.Rol">
+                        <MatOptionString Value="cliente">Cliente</MatOptionString>
+                        <MatOptionString Value="admin">Admin</MatOptionString>
+                    </MatSelect>
+                    <ValidationMessage For="@(() => user.Rol)" />
+                </p>
+
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatButton Type="submit" Raised="true" @onclick="UpdateUser">Modificar</MatButton>
+                    <MatButton Type="submit" Raised="true" Link="/listUser" >Volver</MatButton>
+                </div>
+            </MatThemeProvider>
+        </div>
+    </EditForm>
+     
+</div>
+
+
+
+@code {
+    [Parameter]
+    public int id {get; set;}
+
+    private User user = new User();
+
+    //Colores del tema del login
+    MatTheme formLogin = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    [Inject]
+    IJSRuntime JS { get; set; }
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserService.GetUserById(id);
+    }
+
+    protected async Task UpdateUser()
+    {
+        await UserService.UpdateUser(user);
+        Helper.MatToastHelper.Show(MatToastType.Info, "Usuario modificado correctamente", "Update");
+        NavigationManager.NavigateTo("/listUser");
+
+    }
+
+        
+    protected override void OnInitialized()
+    {
+        if (!authorizationHelper.IsAdmin)
+        {
+            MyNavigationManager.NavigateTo("/");
+        }
+    }
+}
