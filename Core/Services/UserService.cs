@@ -23,7 +23,7 @@ namespace OjedaGrowShop.EF.Services
 
         //Añadir usuario
         public async Task<int> AddUser(User user)
-        { 
+        {
             user.Password = Encriptar(user.Password);
             __ojedaContext.Users.Add(user);
             return await __ojedaContext.SaveChangesAsync();
@@ -55,7 +55,7 @@ namespace OjedaGrowShop.EF.Services
 
         public bool getRolUser(string user)
         {
-            return __ojedaContext.Users.Any(u => u.Rol == "admin");
+            return __ojedaContext.Users.Any(u => u.Name.Equals(user) && u.Rol.Equals("admin"));
         }
 
         //Recogemos la ID del usuario actual
@@ -66,11 +66,37 @@ namespace OjedaGrowShop.EF.Services
             {
                 if (u.Name == user)
                 {
-                    userId= u.Id;
+                    userId = u.Id;
                 }
             }
 
             return userId;
+        }
+
+        //Recogemos todos los usuarios de la base de datos
+        public async Task<IEnumerable<User>> GetAllUser()
+        {
+            return await __ojedaContext.Users.ToListAsync();
+        }
+
+        //Borramos el usuario indicado por id
+        public async Task<bool> DeleteUser(int id)
+        {
+            var user = await __ojedaContext.Users.FindAsync(id);
+            __ojedaContext.Users.Remove(user);
+            return await __ojedaContext.SaveChangesAsync() > 0;
+        }
+
+        //Modificamos
+        public async Task<bool> UpdateUser(User user)
+        {
+            __ojedaContext.Entry(user).State = EntityState.Modified;
+            return await __ojedaContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<User> GetUserById(int id)
+        {
+            return await __ojedaContext.Users.FindAsync(id);    
         }
     }
 }

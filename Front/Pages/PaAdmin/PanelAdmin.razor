@@ -1,0 +1,43 @@
+﻿@page "/panelAdmin"
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
+@inject NavigationManager MyNavigationManager
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex;
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+    <NavMenu />
+</nav>
+
+<div class="container" style="height:550px;margin-top:25px;">
+    <div class="row text-center" style="height:80px; font-size:1.6rem;">
+        <h2>Panel de administración.</h2>
+    </div>
+    <MatThemeProvider Theme="@theme1">
+        <div class="row justify-content-around gap-2" style="">
+            <MatButtonLink Class="col-12 col-md-6" Raised="true" Icon="person_add" Href="/addUser" Style="max-width:350px;font-size:1.5rem;  height:80px;">Agregar usuario</MatButtonLink>
+            <MatButtonLink Class="col-12 col-md-6" Raised="true" Icon="supervised_user_circle" Href="/listUser" Style="max-width:350px;font-size:1.5rem;  height:80px;">Administrar usuarios</MatButtonLink>
+        </div>
+        <div class="row justify-content-around gap-2 mt-5">
+            <MatButtonLink Class="col-12 col-md-6" Raised="true" Icon="add_to_photos" Href="/ButtonLink" Style="max-width:350px;font-size:1.5rem;  height:80px;">Agregar Productos</MatButtonLink>
+            <MatButtonLink Class="col-12 col-md-6" Raised="true" Icon="add_box" Href="/ButtonLink" Style="max-width:350px;font-size:1.5rem; height:80px;">Administrar productos</MatButtonLink>
+        </div>
+    </MatThemeProvider>
+</div>
+@code {
+    MatTheme theme1 = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    protected override void OnInitialized()
+    {
+        if (!authorizationHelper.IsAdmin)
+        {
+            MyNavigationManager.NavigateTo("/");
+        }
+    }
+}

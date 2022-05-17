@@ -66,45 +66,53 @@
                 </NavLink>
             </li>
         </ul>
-
-
-        @if(!authorizationHelper.IsAdmin)
-            {
-        <ul class="navbar-nav" style="background-color: #009624 !important; ">
-            <li class="nav-item dropdown">
-                <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Iniciar / Registrar
-                </span>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li class="enlacesMenu dropdown-item">
-                        <NavLink href="login">
-                            <span class="nav-link  w-100" aria-current="page">Login</span>
-                        </NavLink>
-                    </li>
-                    <li class="enlacesMenu dropdown-item">
-                        <NavLink href="register">
-                            <span class="nav-link  w-100" aria-current="page">Registrarme</span>
-                        </NavLink>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        }else{
+        @if (!authorizationHelper.IsLoged)
+        {
             <ul class="navbar-nav" style="background-color: #009624 !important; ">
-            <li class="nav-item dropdown">
-                <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    @user
-                </span>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li class="enlacesMenu dropdown-item">
-                        <NavLink href="">
-                            <span class="nav-link  w-100" aria-current="page" @onclick="LogOut">Salir</span>
-                        </NavLink>
-                    </li>
+                <li class="nav-item dropdown">
+                    <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Iniciar / Registrar
+                    </span>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li class="enlacesMenu dropdown-item">
+                            <NavLink href="login">
+                                <span class="nav-link  w-100" aria-current="page">Login</span>
+                            </NavLink>
+                        </li>
+                        <li class="enlacesMenu dropdown-item">
+                            <NavLink href="register">
+                                <span class="nav-link  w-100" aria-current="page">Registrarme</span>
+                            </NavLink>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        }
+        else
+        {
+            <ul class="navbar-nav" style="background-color: #009624 !important; margin-right:45px;">
+                <li class="nav-item dropdown">
+                    <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @user
+                    </span>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @if (authorizationHelper.IsAdmin)
+                        {
+                            <li class="enlacesMenu dropdown-item">
+                                <NavLink href="panelAdmin">
+                                    <span class="nav-link  w-100" aria-current="page">Panel Administrador</span>
+                                </NavLink>
+                            </li>
+                        }
+                        <li class="enlacesMenu dropdown-item">
+                            <NavLink href="">
+                                <span class="nav-link  w-100" aria-current="page" @onclick="LogOut">Salir</span>
+                            </NavLink>
+                        </li>
 
-                </ul>
-            </li>
-        </ul>
+                    </ul>
+                </li>
+            </ul>
         }
     </div>
 </div>
@@ -115,7 +123,7 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-     [Inject]
+    [Inject]
     public IMatToaster Toaster { get; set; }
 
     private void ToggleNavMenu()
@@ -153,6 +161,7 @@
     public async Task LogOut()
     {
         authorizationHelper.IsAdmin = false;
+        authorizationHelper.IsLoged = false;
         await ProtectedSessionStore.DeleteAsync("user");
         await ProtectedSessionStore.DeleteAsync("userId");
         Helper.MatToastHelper.Show(MatToastType.Info, "Se ha cerrado sesión correctamente.", "Log Out");
