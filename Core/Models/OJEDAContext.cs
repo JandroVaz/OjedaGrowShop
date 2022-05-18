@@ -18,6 +18,12 @@ namespace OjedaGrowShop.EF.Models
         }
 
         public virtual DbSet<Carrito> Carritos { get; set; }
+        public virtual DbSet<Mascotum> Mascota { get; set; }
+        public virtual DbSet<MetodoPago> MetodoPagos { get; set; }
+        public virtual DbSet<Orden> Ordens { get; set; }
+        public virtual DbSet<OrdenDetalle> OrdenDetalles { get; set; }
+        public virtual DbSet<ProductoCampo> ProductoCampos { get; set; }
+        public virtual DbSet<ProductoMascotum> ProductoMascota { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -35,20 +41,157 @@ namespace OjedaGrowShop.EF.Models
 
             modelBuilder.Entity<Carrito>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("carrito");
 
-                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
-
                 entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd()
                     .HasColumnName("id")
                     .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
 
                 entity.Property(e => e.Idproducto).HasColumnName("idproducto");
 
                 entity.Property(e => e.Idusuario).HasColumnName("idusuario");
+
+                entity.HasOne(d => d.IdproductoNavigation)
+                    .WithMany(p => p.Carritos)
+                    .HasForeignKey(d => d.Idproducto)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("producto_campo");
+
+                entity.HasOne(d => d.Idproducto1)
+                    .WithMany(p => p.Carritos)
+                    .HasForeignKey(d => d.Idproducto)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("producto_mascota");
+
+                entity.HasOne(d => d.IdusuarioNavigation)
+                    .WithMany(p => p.Carritos)
+                    .HasForeignKey(d => d.Idusuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("user");
+            });
+
+            modelBuilder.Entity<Mascotum>(entity =>
+            {
+                entity.ToTable("mascota");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Genero).HasColumnName("genero");
+
+                entity.Property(e => e.Raza).HasColumnName("raza");
+
+                entity.Property(e => e.TipoMascota).HasColumnName("tipo_mascota");
+            });
+
+            modelBuilder.Entity<MetodoPago>(entity =>
+            {
+                entity.ToTable("metodo_pago");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.NombreMetodo).HasColumnName("nombre_metodo");
+            });
+
+            modelBuilder.Entity<Orden>(entity =>
+            {
+                entity.ToTable("orden");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.IdMetodoPago).HasColumnName("id_metodo_pago");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.Total).HasColumnName("total");
+
+                entity.HasOne(d => d.IdMetodoPagoNavigation)
+                    .WithMany(p => p.Ordens)
+                    .HasForeignKey(d => d.IdMetodoPago)
+                    .HasConstraintName("metodo_pago");
+
+                entity.HasOne(d => d.IdUsuarioNavigation)
+                    .WithMany(p => p.Ordens)
+                    .HasForeignKey(d => d.IdUsuario)
+                    .HasConstraintName("user");
+            });
+
+            modelBuilder.Entity<OrdenDetalle>(entity =>
+            {
+                entity.ToTable("orden_detalle");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+
+                entity.Property(e => e.IdOrden).HasColumnName("id_orden");
+
+                entity.Property(e => e.IdProducto).HasColumnName("id_producto");
+
+                entity.Property(e => e.Precio).HasColumnName("precio");
+
+                entity.HasOne(d => d.IdOrdenNavigation)
+                    .WithMany(p => p.OrdenDetalles)
+                    .HasForeignKey(d => d.IdOrden)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("orden");
+
+                entity.HasOne(d => d.IdProductoNavigation)
+                    .WithMany(p => p.OrdenDetalles)
+                    .HasForeignKey(d => d.IdProducto)
+                    .HasConstraintName("producto_campo");
+
+                entity.HasOne(d => d.IdProducto1)
+                    .WithMany(p => p.OrdenDetalles)
+                    .HasForeignKey(d => d.IdProducto)
+                    .HasConstraintName("producto_mascota");
+            });
+
+            modelBuilder.Entity<ProductoCampo>(entity =>
+            {
+                entity.ToTable("producto_campo");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Categoria).HasColumnName("categoria");
+
+                entity.Property(e => e.Descripcion).HasColumnName("descripcion");
+
+                entity.Property(e => e.Imagen).HasColumnName("imagen");
+
+                entity.Property(e => e.NombrePro).HasColumnName("nombre_pro");
+
+                entity.Property(e => e.Precio).HasColumnName("precio");
+            });
+
+            modelBuilder.Entity<ProductoMascotum>(entity =>
+            {
+                entity.ToTable("producto_mascota");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Categoria).HasColumnName("categoria");
+
+                entity.Property(e => e.Descripcion).HasColumnName("descripcion");
+
+                entity.Property(e => e.Imagen).HasColumnName("imagen");
+
+                entity.Property(e => e.NombreProducto).HasColumnName("nombre_producto");
+
+                entity.Property(e => e.Precio).HasColumnName("precio");
             });
 
             modelBuilder.Entity<User>(entity =>
