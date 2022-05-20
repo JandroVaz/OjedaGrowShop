@@ -12,7 +12,7 @@
 @using OjedaGrowShop.Shared.ProductosIndex;
 @inject ProtectedSessionStorage ProtectedSessionStore
 @inject IProductService ProductService
-
+@inject IProductMascService ProducMascService
 <style>
     .formClass {
         margin-top: 125px !important;
@@ -65,15 +65,37 @@
 
                 </p>
                 <p>
-                    <MatSelect Label="Categoría del producto" @bind-Value="addProd.Categoria">
-                        <MatOptionString Value="herramienta">Herramientas</MatOptionString>
-                        <MatOptionString Value="semillas">Semillas</MatOptionString>
-                        <MatOptionString Value="mantenimiento">Mantenimiento</MatOptionString>
-                        <MatOptionString Value="accesorio">Accesorio</MatOptionString>
-                        <MatOptionString Value="alimentacion">Alimentación</MatOptionString>
-                        <MatOptionString Value="cuidados">Cuidados</MatOptionString>
-                    </MatSelect>
-                    <ValidationMessage For="@(() => addProd.Categoria)" />
+
+                    @if (addProd.Prod.Equals("campo"))
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="addProd.Categoria">
+                            <MatOptionString Value="herramienta">Herramientas</MatOptionString>
+                            <MatOptionString Value="semillas">Semillas</MatOptionString>
+                            <MatOptionString Value="mantenimiento">Mantenimiento</MatOptionString>
+                        </MatSelect>
+                        <ValidationMessage For="@(() => addProd.Categoria)" />
+                    }
+                    else if (addProd.Prod.Equals("mascota"))
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="addProd.Categoria2">
+                            <MatOptionString Value="accesorio">Accesorio</MatOptionString>
+                            <MatOptionString Value="alimentacion">Alimentación</MatOptionString>
+                            <MatOptionString Value="cuidados">Cuidados</MatOptionString>
+                        </MatSelect>
+                        <ValidationMessage For="@(() => addProd.Categoria)" />
+
+                    }
+                    else
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="produc">
+                            <MatOptionString Value="" Selected>Selecciona la categoría </MatOptionString>
+
+                        </MatSelect>
+                        <ValidationMessage For="@(() => addProd.Categoria)" />
+                    }
+
+
+
 
                 </p>
 
@@ -106,6 +128,7 @@
     [Inject]
     public IMatToaster Toaster { get; set; }
 
+    public string produc { get; set; } = "";
 
     protected override void OnInitialized()
     {
@@ -133,28 +156,52 @@
         [Required(ErrorMessage = "El campo 'Precio' es obligatorio")]
         public double? Precio { get; set; }
 
-        [Required(ErrorMessage = "El campo 'Categoria' es obligatorio")]
+        //Producto campo
         public string Categoria { get; set; }
+
+        //Producto mascota
+        public string Categoria2 { get; set; }
 
         [Required(ErrorMessage = "El campo 'Imagen' es obligatorio")]
         public string Imagen { get; set; }
 
         [Required(ErrorMessage = "El campo 'Categoria del producto' es obligatorio")]
-        public string Prod { get; set; }
+        public string Prod { get; set; } = "";
     }
 
 
     public async void addNewProd()
     {
-        int result = await ProductService.AddProd(new EF.Models.ProductoCampo()
-            {
-                Id = 0,
-                NombrePro = addProd.NomPro,
-                Descripcion = addProd.Descripcion,
-                Precio = addProd.Precio,
-                Categoria = addProd.Categoria,
-                Imagen = addProd.Imagen
-            });
+        int result = 0;
+
+        if (addProd.Prod.Equals("campo"))
+        {
+            result = await ProductService.AddProd(new EF.Models.ProductoCampo()
+                {
+                    Id = 0,
+                    NombrePro = addProd.NomPro,
+                    Descripcion = addProd.Descripcion,
+                    Precio = addProd.Precio,
+                    Categoria = addProd.Categoria,
+                    Imagen = addProd.Imagen
+                });
+        }
+        else
+        {
+            result = await ProducMascService.AddProd(new EF.Models.ProductoMascotum()
+                {
+                    Id = 0,
+                    NombreProducto = addProd.NomPro,
+                    Descripcion = addProd.Descripcion,
+                    Precio = addProd.Precio,
+                    Categoria = addProd.Categoria2,
+                    Imagen = addProd.Imagen
+                });
+        }
+
+
+
+
         if (result > 0)
         {
             Helper.MatToastHelper.Show(MatToastType.Info, "El producto se ha creado correctamente", "Registro de producto");

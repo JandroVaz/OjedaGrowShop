@@ -53,6 +53,9 @@ namespace OjedaGrowShop
             services.AddTransient<IProductService, ProductService>(
                 e => new ProductService(new OJEDAContext())
                 );
+            services.AddTransient<IProductMascService, ProductMascService>(
+                e => new ProductMascService(new OJEDAContext())
+                );
             services.AddTransient<IPhotoService, PhotoService>();
             services.AddScoped<AuthorizationHelper>();
             services.AddSingleton<MailServices>();
