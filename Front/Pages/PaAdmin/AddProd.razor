@@ -1,0 +1,215 @@
+﻿@page "/addProd"
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using OjedaGrowShop.EF.Services
+@using OjedaGrowShop.EF.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+@inject IUserService UserService;
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex;
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject IProductService ProductService
+@inject IProductMascService ProducMascService
+<style>
+    .formClass {
+        margin-top: 125px !important;
+        padding: 1rem;
+        max-width: 650px;
+        min-width: 300px;
+    }
+
+    .redirect {
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+</style>
+
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+    <NavMenu />
+</nav>
+
+<div class="container mb-4 estiloFormulario align-content-center">
+    <EditForm Model="addProd" OnValidSubmit="addNewProd">
+        <DataAnnotationsValidator />
+        <div class="mx-auto my-0 text-center formClass" style="">
+
+            <h2>Agregar nuevo usuario</h2>
+            <MatThemeProvider Theme="@formLogin">
+                <MatSelect Label="TIPO PRODUCTO" @bind-Value="addProd.Prod">
+                    <MatOptionString Value="campo">Campo</MatOptionString>
+                    <MatOptionString Value="mascota">Mascotas</MatOptionString>
+                </MatSelect>
+                <ValidationMessage For="@(() => addProd.Prod)" />
+
+
+                <p>
+                    <MatTextField Label="Nombre producto" @bind-Value="addProd.NomPro" />
+                    <ValidationMessage For="@(() =>addProd.NomPro)" />
+                </p>
+                <p>
+                    <MatTextField @bind-Value="addProd.Descripcion" Label="Introduce la descripción del producto" TextArea="true" Style="width:100%;max-width:450px; height:150px;"></MatTextField>
+                    <ValidationMessage For="@(() => addProd.Descripcion)" />
+
+                </p>
+                <p>
+                    <MatNumericUpDownField Label="Precio del producto"
+                                           @bind-Value="addProd.Precio"
+                                           FieldType="MatNumericUpDownFieldType.Currency"
+                                           DecimalPlaces=2>
+                    </MatNumericUpDownField>
+                    <ValidationMessage For="@(() => addProd.Precio)" />
+
+                </p>
+                <p>
+
+                    @if (addProd.Prod.Equals("campo"))
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="addProd.Categoria">
+                            <MatOptionString Value="herramienta">Herramientas</MatOptionString>
+                            <MatOptionString Value="semillas">Semillas</MatOptionString>
+                            <MatOptionString Value="mantenimiento">Mantenimiento</MatOptionString>
+                        </MatSelect>
+                        <ValidationMessage For="@(() => addProd.Categoria)" />
+                    }
+                    else if (addProd.Prod.Equals("mascota"))
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="addProd.Categoria2">
+                            <MatOptionString Value="accesorio">Accesorio</MatOptionString>
+                            <MatOptionString Value="alimentacion">Alimentación</MatOptionString>
+                            <MatOptionString Value="cuidados">Cuidados</MatOptionString>
+                        </MatSelect>
+                        <ValidationMessage For="@(() => addProd.Categoria)" />
+
+                    }
+                    else
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="produc">
+                            <MatOptionString Value="" Selected>Selecciona la categoría </MatOptionString>
+
+                        </MatSelect>
+                        <ValidationMessage For="@(() => addProd.Categoria)" />
+                    }
+
+
+
+
+                </p>
+
+                <p>
+                    <MatTextField Label="Ubicación imagen" @bind-Value="addProd.Imagen" />
+                    <ValidationMessage For="@(() =>addProd.Imagen)" />
+                </p>
+
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatButton Type="submit" Raised="true">Añadir Producto</MatButton>
+                    <MatButton Type="submit" Raised="true" Link="/panelAdmin">Volver</MatButton>
+                </div>
+            </MatThemeProvider>
+        </div>
+    </EditForm>
+</div>
+
+
+
+@code {
+    //Colores del tema del login
+    MatTheme formLogin = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    [Inject]
+    IJSRuntime JS { get; set; }
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+    public string produc { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        if (!authorizationHelper.IsAdmin)
+        {
+            MyNavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Helper.MatToastHelper.Toaster = Toaster;
+        }
+    }
+
+    RegisterModel addProd = new RegisterModel();
+
+    // Usuario, contraseña, Descripcion y confirmar contraseña
+    public class RegisterModel
+    {
+        [Required(ErrorMessage = "El campo 'Nombre producto' es obligatorio")]
+        public string NomPro { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Descripcion' es obligatorio")]
+        public string Descripcion { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Precio' es obligatorio")]
+        public double? Precio { get; set; }
+
+        //Producto campo
+        public string Categoria { get; set; }
+
+        //Producto mascota
+        public string Categoria2 { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Imagen' es obligatorio")]
+        public string Imagen { get; set; }
+
+        [Required(ErrorMessage = "El campo 'Categoria del producto' es obligatorio")]
+        public string Prod { get; set; } = "";
+    }
+
+
+    public async void addNewProd()
+    {
+        int result = 0;
+
+        if (addProd.Prod.Equals("campo"))
+        {
+            result = await ProductService.AddProd(new EF.Models.ProductoCampo()
+                {
+                    Id = 0,
+                    NombrePro = addProd.NomPro,
+                    Descripcion = addProd.Descripcion,
+                    Precio = addProd.Precio,
+                    Categoria = addProd.Categoria,
+                    Imagen = addProd.Imagen
+                });
+        }
+        else
+        {
+            result = await ProducMascService.AddProd(new EF.Models.ProductoMascotum()
+                {
+                    Id = 0,
+                    NombreProducto = addProd.NomPro,
+                    Descripcion = addProd.Descripcion,
+                    Precio = addProd.Precio,
+                    Categoria = addProd.Categoria2,
+                    Imagen = addProd.Imagen
+                });
+        }
+
+
+
+
+        if (result > 0)
+        {
+            Helper.MatToastHelper.Show(MatToastType.Info, "El producto se ha creado correctamente", "Registro de producto");
+            MyNavigationManager.NavigateTo("/panelAdmin");
+        }
+        else
+        {
+            Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error, contacte con el administrador!", "Registro");
+        }
+    }
+}
