@@ -1,0 +1,188 @@
+﻿@page "/listProd"
+@using OjedaGrowShop.EF.Models
+@using OjedaGrowShop.EF.Services
+@using OjedaGrowShop.EF.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+@inject IProductMascService ProducMascService
+@inject IProductService ProducCampService
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.Shared.ProductosIndex
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+    <NavMenu />
+</nav>
+
+<div class="container mt-4 mb-4" style="height:650px;">
+
+
+    @if (productosCampos == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <p>
+            <h3></h3>
+            <MatThemeProvider Theme="@styleTable">
+                <MatSelect Label="Tipo de producto" @bind-Value="tipoPro">
+                    <MatOptionString Value="campo">Campo</MatOptionString>
+                    <MatOptionString Value="mascota">Mascota</MatOptionString>
+                </MatSelect>
+            </MatThemeProvider>
+        </p>
+
+        @if (!tipoPro.Equals("mascota"))
+        {
+            <div class="row">
+                <h2>Listado de productos de campo.</h2>
+            </div>
+
+            <MatThemeProvider Theme="@styleTable">
+                <MatTable Items="@productosCampos" class="mat-elevation-z5" Style="max-width:750x;">
+                    <MatTableHeader>
+                        <th>Id</th>
+                        <th>Nombre del producto</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Modificar</th>
+                        <th>Borrar</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Id</td>
+                        <td>@context.NombrePro</td>
+                        <td>@context.Descripcion</td>
+                        <td>@context.Categoria</td>
+                        <td>@context.Precio €</td>
+                        <td><a class="btn btn-primary" href="/modifyUser/@context.Id">Modificar</a></td>
+                        <td>
+                            <MatThemeProvider Theme="@delete">
+                                <MatButton Icon="close"
+                                   OnClick="@(async() =>
+                                        {await ProducCampService.DeleteProd(@context.Id);
+                                         productoCampos = await ProducCampService.GetProductoCampos();
+                                         productosCampos = productoCampos.ToArray();
+                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borraco correctamente!", "Eliminar");})"
+                                   Raised="true">Borrar</MatButton>
+                            </MatThemeProvider>
+                        </td>
+
+
+                    </MatTableRow>
+                </MatTable>
+                <MatButton Type="submit" Raised="true" Link="/panelAdmin">Volver</MatButton>
+            </MatThemeProvider>
+        }
+        else
+        {
+            <div class="row">
+                <h2>Listado de productos de mascotas.</h2>
+            </div>
+            <MatThemeProvider Theme="@styleTable">
+                <MatTable Items="@productoMascotas" class="mat-elevation-z5" Style="max-width:750x;">
+                    <MatTableHeader>
+                        <th>Id</th>
+                        <th>Nombre del producto</th>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Modificar</th>
+                        <th>Borrar</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Id</td>
+                        <td>@context.NombreProducto</td>
+                        <td>@context.Descripcion</td>
+                        <td>@context.Categoria</td>
+                        <td>@context.Precio €</td>
+                        <td><a class="btn btn-primary" href="/modifyUser/@context.Id">Modificar</a></td>
+                        <td>
+                            <MatThemeProvider Theme="@delete">
+                                <MatButton Icon="close"
+                                   OnClick="@(async() =>
+                                        {await ProducMascService.DeleteProd(@context.Id);
+                                         productoMacota = await ProducMascService.GetProductoMascotas();
+                                         productoMascotas = productoMacota.ToArray();
+                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borraco correctamente!", "Eliminar");})"
+                                   Raised="true">Borrar</MatButton>
+                            </MatThemeProvider>
+                        </td>
+
+
+                    </MatTableRow>
+                </MatTable>
+                <MatButton Type="submit" Raised="true" Link="/panelAdmin">Volver</MatButton>
+            </MatThemeProvider>
+
+        }
+
+
+
+
+
+    }
+</div>
+
+
+@code {
+    public IEnumerable<ProductoCampo> productoCampos { get; set; }
+    public IEnumerable<ProductoMascotum> productoMacota { get; set; }
+    public string Message { get; set; }
+
+    public string tipoPro { get; set; } = "";
+
+    MatTheme delete = new MatTheme()
+        {
+            Primary = "#c62828",
+        };
+
+    MatTheme styleTable = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    //dialog
+    bool dialogIsOpen = false;
+    void OpenDialog()
+    {
+
+        dialogIsOpen = true;
+    }
+
+
+    ProductoCampo[] productosCampos;
+    ProductoMascotum[] productoMascotas;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            productoCampos = await ProducCampService.GetProductoCampos();
+            productoMacota = await ProducMascService.GetProductoMascotas();
+
+            productosCampos = productoCampos.ToArray();
+            productoMascotas = productoMacota.ToArray();
+
+
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+
+
+    protected override void OnInitialized()
+    {
+        if (!authorizationHelper.IsAdmin)
+        {
+            MyNavigationManager.NavigateTo("/");
+        }
+    }
+}

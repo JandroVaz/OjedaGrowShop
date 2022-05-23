@@ -11,7 +11,7 @@ namespace OjedaGrowShop.EF.Services.Interfaces
         Task<bool> DeleteProd(int id);
         Task<bool> UpdateProd(ProductoMascotum productoMascotum);
         Task<ProductoMascotum> GetProdById(int id);
-        Task<IEnumerable<ProductoMascotum>> GetProductoCampos();
+        Task<IEnumerable<ProductoMascotum>> GetProductoMascotas();
         Task<int> AddProd(ProductoMascotum productoMascotum);
     }
 }

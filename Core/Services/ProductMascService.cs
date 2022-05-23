@@ -42,7 +42,7 @@ namespace OjedaGrowShop.EF.Services
         }
 
         //Listar prod
-        public async Task<IEnumerable<ProductoMascotum>> GetProductoCampos()
+        public async Task<IEnumerable<ProductoMascotum>> GetProductoMascotas()
         {
             return await __ojedaContext.ProductoMascota.ToListAsync();
         }

@@ -87,9 +87,8 @@
                     }
                     else
                     {
-                        <MatSelect Label="Categoría del producto" @bind-Value="produc">
-                            <MatOptionString Value="" Selected>Selecciona la categoría </MatOptionString>
-
+                        <MatSelect Label="Categoría del producto" @bind-Value="selectDefault">
+                            <MatOptionString @bind-Value="@selectDefault">Selecciona la categoría </MatOptionString>
                         </MatSelect>
                         <ValidationMessage For="@(() => addProd.Categoria)" />
                     }
@@ -129,7 +128,7 @@
     public IMatToaster Toaster { get; set; }
 
     public string produc { get; set; } = "";
-
+    public string selectDefault { get; set; } = "Selecciona la categoría";
     protected override void OnInitialized()
     {
         if (!authorizationHelper.IsAdmin)
