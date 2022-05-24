@@ -1,23 +1,25 @@
 ﻿@page "/listProd"
+@using OjedaGrowShop.EF.DTOS
 @using OjedaGrowShop.EF.Models
 @using OjedaGrowShop.EF.Services
 @using OjedaGrowShop.EF.Services.Interfaces
-@inject NavigationManager NavigationManager
-@inject NavigationManager MyNavigationManager
-@inject IProductMascService ProducMascService
-@inject IProductService ProducCampService
-@using OjedaGrowShop.Helper
-@inject AuthorizationHelper authorizationHelper
 @using Microsoft.AspNetCore.ProtectedBrowserStorage
 @using OjedaGrowShop.Shared.ProductosIndex
-@inject ProtectedSessionStorage ProtectedSessionStore
+@using OjedaGrowShop.Helper
 
+@inject IProductMascService ProducMascService
+@inject IProductService ProducCampService
+@inject IPhotoService photoService
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject AuthorizationHelper authorizationHelper
 
 <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
     <NavMenu />
 </nav>
 
-<div class="container mt-4 mb-4" style="height:650px;">
+<div class="container mt-4 mb-4" style="min-height:650px;">
 
 
     @if (productosCampos == null)
@@ -50,6 +52,7 @@
                         <th>Descripción</th>
                         <th>Categoría</th>
                         <th>Precio</th>
+                        <th>Imagen</th>
                         <th>Modificar</th>
                         <th>Borrar</th>
                     </MatTableHeader>
@@ -59,7 +62,13 @@
                         <td>@context.Descripcion</td>
                         <td>@context.Categoria</td>
                         <td>@context.Precio €</td>
+                        <td>
+                            <div style="width:200px; height:200px;overflow:hidden;">
+                                <img class="img-fluid" src="images/imgcampo/@context.Imagen" FolderName="@context.Imagen" />
+                            </div>
+                        </td>
                         <td><a class="btn btn-primary" href="/modifyUser/@context.Id">Modificar</a></td>
+
                         <td>
                             <MatThemeProvider Theme="@delete">
                                 <MatButton Icon="close"
@@ -67,7 +76,8 @@
                                         {await ProducCampService.DeleteProd(@context.Id);
                                          productoCampos = await ProducCampService.GetProductoCampos();
                                          productosCampos = productoCampos.ToArray();
-                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borraco correctamente!", "Eliminar");})"
+                                         photoService. DeletePhoto("campo",@context.Imagen);
+                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borrado correctamente!", "Eliminar");})"
                                    Raised="true">Borrar</MatButton>
                             </MatThemeProvider>
                         </td>
@@ -91,6 +101,7 @@
                         <th>Descripción</th>
                         <th>Categoría</th>
                         <th>Precio</th>
+                        <th>Imagen</th>
                         <th>Modificar</th>
                         <th>Borrar</th>
                     </MatTableHeader>
@@ -100,6 +111,11 @@
                         <td>@context.Descripcion</td>
                         <td>@context.Categoria</td>
                         <td>@context.Precio €</td>
+                        <td>
+                            <div style="width:200px; height:200px; overflow:hidden;">
+                                <img class="img-fluid" src="images/imgmascota/@context.Imagen" FolderName="@context.Imagen" />
+                            </div>
+                        </td>
                         <td><a class="btn btn-primary" href="/modifyUser/@context.Id">Modificar</a></td>
                         <td>
                             <MatThemeProvider Theme="@delete">
@@ -108,7 +124,8 @@
                                         {await ProducMascService.DeleteProd(@context.Id);
                                          productoMacota = await ProducMascService.GetProductoMascotas();
                                          productoMascotas = productoMacota.ToArray();
-                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borraco correctamente!", "Eliminar");})"
+                                         photoService. DeletePhoto("mascota",@context.Imagen);
+                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borrado correctamente!", "Eliminar");})"
                                    Raised="true">Borrar</MatButton>
                             </MatThemeProvider>
                         </td>
@@ -134,7 +151,7 @@
     public IEnumerable<ProductoMascotum> productoMacota { get; set; }
     public string Message { get; set; }
 
-    public string tipoPro { get; set; } = "";
+    public string tipoPro { get; set; } = "mascota";
 
     MatTheme delete = new MatTheme()
         {
@@ -176,8 +193,14 @@
         }
     }
 
+    //IMAGEN
+    private IList<PhotoWrapper> GetPhotoList(string folderName)
+    {
+        return photoService.ListWatermarkPhotos(folderName);
+    }
 
 
+    //PERMISOS DE ADMIN
     protected override void OnInitialized()
     {
         if (!authorizationHelper.IsAdmin)
