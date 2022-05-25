@@ -9,9 +9,9 @@ namespace OjedaGrowShop.EF.Services.Interfaces
     public partial interface IProductService
     {
         Task<bool> DeleteProd(int id);
-        Task<bool> UpdateProd(ProductoCampo productoCampo);
-        Task<ProductoCampo> GetProdById(int id);
-        Task<IEnumerable<ProductoCampo>> GetProductoCampos();
-        Task<int> AddProd(ProductoCampo productoCampo);
+        Task<bool> UpdateProd(Producto producto);
+        Task<Producto> GetProdById(int id);
+        Task<IEnumerable<Producto>> ListProduct();
+        Task<int> AddProd(Producto producto);
     }
 }

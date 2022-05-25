@@ -13,7 +13,6 @@
 @using OjedaGrowShop.Shared.ProductosIndex;
 @inject ProtectedSessionStorage ProtectedSessionStore
 @inject IProductService ProductService
-@inject IProductMascService ProducMascService
 @inject IPhotoService photoService
 
 <style>
@@ -40,7 +39,7 @@
         <DataAnnotationsValidator />
         <div class="mx-auto my-0 text-center formClass" style="">
 
-            <h2>Agregar nuevo usuario</h2>
+            <h2>Agregar un nuevo producto.</h2>
             <MatThemeProvider Theme="@formLogin">
                 <p>
                     <MatSelect Label="TIPO PRODUCTO" @bind-Value="addProd.Prod">
@@ -103,13 +102,13 @@
                 </p>
 
                 <p>
-                
+
                     <MatFileUpload OnChange="@PhotoProd" Label="Introduce la imagen del producto"></MatFileUpload>
                     @foreach (var f in listImg)
                     {
                         <div>@f</div>
                     }
-                
+
                 </p>
 
                 <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
@@ -219,34 +218,17 @@
             PhotoCreationResult photoCreationResult = photoService.CreateImage(photoDtos.FirstOrDefault().MemoryStream, photoDtos.FirstOrDefault().namePhoto, addProd.Prod);
             if (photoCreationResult.OperationResult > -1)
             {
+                result = await ProductService.AddProd(new EF.Models.Producto()
+                    {
+                        Id = 0,
+                        Nombre = addProd.NomPro,
+                        Descripcion = addProd.Descripcion,
+                        Precio = addProd.Precio.GetValueOrDefault(),
+                        TipoProducto = addProd.Prod.Equals("mascota") ? 1 : 2,
+                        Categoria = addProd.Prod.Equals("mascota") ? addProd.Categoria2 : addProd.Categoria,
+                        Imagen = photoDtos.FirstOrDefault().namePhoto
+                    });
 
-
-
-                if (addProd.Prod.Equals("campo"))
-                {
-
-                    result = await ProductService.AddProd(new EF.Models.ProductoCampo()
-                        {
-                            Id = 0,
-                            NombrePro = addProd.NomPro,
-                            Descripcion = addProd.Descripcion,
-                            Precio = addProd.Precio,
-                            Categoria = addProd.Categoria,
-                            Imagen = photoDtos.FirstOrDefault().namePhoto
-                        });
-                }
-                else
-                {
-                    result = await ProducMascService.AddProd(new EF.Models.ProductoMascotum()
-                        {
-                            Id = 0,
-                            NombreProducto = addProd.NomPro,
-                            Descripcion = addProd.Descripcion,
-                            Precio = addProd.Precio,
-                            Categoria = addProd.Categoria2,
-                            Imagen = photoDtos.FirstOrDefault().namePhoto
-                        });
-                }
             }
             else
             {

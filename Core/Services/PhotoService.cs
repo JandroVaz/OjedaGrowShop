@@ -7,7 +7,7 @@ using System.Text;
 
 namespace OjedaGrowShop.EF.Services
 {
-  
+
 
     public partial class PhotoService : IPhotoService
     {
@@ -151,17 +151,18 @@ namespace OjedaGrowShop.EF.Services
 
             foreach (string filePath in Directory.GetFiles(Path.Combine(originalPath, folder)))
             {
-                using var fileStream = File.OpenRead(Path.Combine(originalPath,filePath));
+                using var fileStream = File.OpenRead(Path.Combine(originalPath, filePath));
                 string fileName = Path.GetFileName(filePath);
-                files.Add(new PhotoWrapper() { 
-                    Base64 = Path.Combine(originalPath,filePath).Split("wwwroot/")[1],
+                files.Add(new PhotoWrapper()
+                {
+                    Base64 = Path.Combine(originalPath, filePath).Split("wwwroot/")[1],
                     Name = fileName.Split(".")[0],
                     Type = fileName.Split(".")[1]
-                
+
                 });
             }
 
-                return files;
+            return files;
         }
     }
 }

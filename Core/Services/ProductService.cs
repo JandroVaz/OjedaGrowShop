@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OjedaGrowShop.EF.Models;
 using OjedaGrowShop.EF.Services.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OjedaGrowShop.EF.Services
@@ -20,36 +18,36 @@ namespace OjedaGrowShop.EF.Services
         }
 
         //ADD USER
-        public async Task<int> AddProd(ProductoCampo productoCampo)
+        public async Task<int> AddProd(Producto producto)
         {
-            __ojedaContext.ProductoCampos.Add(productoCampo);
+            __ojedaContext.Productos.Add(producto);
             return await __ojedaContext.SaveChangesAsync();
         }
 
         //DELETE
         public async Task<bool> DeleteProd(int id)
         {
-            var productoCampo = await __ojedaContext.ProductoCampos.FindAsync(id);
-            __ojedaContext.ProductoCampos.Remove(productoCampo);
+            var producto = await __ojedaContext.Productos.FindAsync(id);
+            __ojedaContext.Productos.Remove(producto);
             return await __ojedaContext.SaveChangesAsync() > 0;
         }
 
         //GET BY ID
-        public async Task<ProductoCampo> GetProdById(int id)
+        public async Task<Producto> GetProdById(int id)
         {
-            return await __ojedaContext.ProductoCampos.FindAsync(id);
+            return await __ojedaContext.Productos.FindAsync(id);
         }
 
         //GET ALL
-        public async Task<IEnumerable<ProductoCampo>> GetProductoCampos()
+        public async Task<IEnumerable<Producto>> ListProduct()
         {
-            return await __ojedaContext.ProductoCampos.ToListAsync();
+            return await __ojedaContext.Productos.ToListAsync();
         }
 
         //UPDATE PROD
-        public async Task<bool> UpdateProd(ProductoCampo productoCampo)
+        public async Task<bool> UpdateProd(Producto producto)
         {
-            __ojedaContext.Entry(productoCampo).State = EntityState.Modified;
+            __ojedaContext.Entry(producto).State = EntityState.Modified;
             return await __ojedaContext.SaveChangesAsync() > 0;
         }
     }

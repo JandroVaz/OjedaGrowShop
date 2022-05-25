@@ -9,7 +9,6 @@ namespace OjedaGrowShop.EF.Models
     {
         public ProductoMascotum()
         {
-            Carritos = new HashSet<Carrito>();
             OrdenDetalles = new HashSet<OrdenDetalle>();
         }
 
@@ -20,7 +19,6 @@ namespace OjedaGrowShop.EF.Models
         public string Categoria { get; set; }
         public string Imagen { get; set; }
 
-        public virtual ICollection<Carrito> Carritos { get; set; }
         public virtual ICollection<OrdenDetalle> OrdenDetalles { get; set; }
     }
 }

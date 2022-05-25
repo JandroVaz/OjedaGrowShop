@@ -96,7 +96,7 @@ namespace OjedaGrowShop.EF.Services
 
         public async Task<User> GetUserById(int id)
         {
-            return await __ojedaContext.Users.FindAsync(id);    
+            return await __ojedaContext.Users.FindAsync(id);
         }
     }
 }
