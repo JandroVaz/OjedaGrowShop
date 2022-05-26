@@ -59,7 +59,7 @@
                     <MatTableRow>
                         <td>@context.Id</td>
                         <td>@context.Nombre</td>
-                        <td>@context.Descripcion</td>
+                        <td style="min-width:350px;">@context.Descripcion</td>
                         <td>@context.Categoria</td>
                         <td>@context.Precio €</td>
                         <td>
@@ -76,7 +76,7 @@
                                         {await ProducCampService.DeleteProd(@context.Id);
                                          producto = await ProducCampService.ListProduct();
                                          listProduct = producto.ToArray();
-                                         photoService. DeletePhoto("campo",@context.Imagen);
+                                         photoService.DeletePhoto("mascota",@context.Imagen);
                                          Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borrado correctamente!", "Eliminar");})"
                                    Raised="true">Borrar</MatButton>
                             </MatThemeProvider>
@@ -108,7 +108,7 @@
                     <MatTableRow>
                         <td>@context.Id</td>
                         <td>@context.Nombre</td>
-                        <td>@context.Descripcion</td>
+                        <td style="min-width:350px;">@context.Descripcion</td>
                         <td>@context.Categoria</td>
                         <td>@context.Precio €</td>
                         <td>
@@ -124,7 +124,7 @@
                                         {await ProducCampService.DeleteProd(@context.Id);
                                          producto = await ProducCampService.ListProduct();
                                          listProduct = producto.ToArray();
-                                         photoService. DeletePhoto("mascota",@context.Imagen);
+                                         photoService. DeletePhoto("campo",@context.Imagen);
                                          Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borrado correctamente!", "Eliminar");})"
                                    Raised="true">Borrar</MatButton>
                             </MatThemeProvider>

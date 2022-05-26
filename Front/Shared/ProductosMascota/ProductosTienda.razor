@@ -1,4 +1,8 @@
-﻿<style>
+﻿@using OjedaGrowShop.EF.Models
+@using OjedaGrowShop.EF.Services.Interfaces
+@using System.Globalization
+@inject IProductService ProducCampService
+<style>
        .card {
         box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
         min-width:250px;
@@ -23,68 +27,99 @@
 </div>
 <div class="row flex-wrap flex-column flex-md-row gap-5 justify-content-center" style="margin-top:50px; margin-bottom:50px">
 
-    @for (var i = 0; i < 6; i++)
+    
+    
+    @if (listProduct != null)
     {
+        @*        @for (var i = 0; i < listProduct.Where(e => e.TipoProducto == 2).Count(); i++)
+            {
 
-        @if (i % 2 == 0)
+            }*@
+
+
+        @foreach (Producto item in listProduct)
         {
-       <div data-aos="flip-up" class="col-12 col-md-4 col-xl-3">
+            @if (item.Id % 2 == 0)
+            {
+                <div data-aos="flip-up" class="col-12 col-md-4 col-xl-3">
 
-                    <MatCard class="demo-mat-card card">
-                        <MatCardContent>
-                            <MatCardMedia Wide="true" ImageUrl="https://images.pexels.com/photos/4432260/pexels-photo-4432260.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"></MatCardMedia>
+                    <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
+                        <MatCardContent >
+                            <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(item.Imagen)"></MatCardMedia>
                             <div class="demo-mat-card-content">
-                                <MatHeadline6 class="demo-mat-card-clean-margin">
-                                    Our Changing Planet
+                                <MatHeadline6 class="demo-mat-card-clean-margin text-center">
+                                    <span class="p-2">@item.Nombre </span>
                                 </MatHeadline6>
-                                <MatSubtitle2 class="demo-mat-card-clean-margin">
-                                    by Kurt Wagner
+                                <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
+                                    @myTI.ToTitleCase(item.Categoria)
                                 </MatSubtitle2>
                             </div>
 
-                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
-                                Visit ten places on our planet that are undergoing the biggest changes today.
+                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin m-3">
+
+                            @if (item.Descripcion.Length > 200)
+                                {
+                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-150)... </span>
+                                }
+                                else
+                                {
+                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-30)... </span>
+                                }
+
+
                             </MatBody2>
                         </MatCardContent>
-                        <MatCardActions>
-
-                            <MatCardActionIcons>
+                        <MatCardActions Style="position: absolute; bottom: 0;">
+                            <MatCardActionIcons  >
                                 <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
                             </MatCardActionIcons>
                         </MatCardActions>
                     </MatCard>
                 </div>
-        }
-        else
-        {
-        <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
 
-                    <MatCard class="demo-mat-card card">
+            }
+            else
+            {
+                <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
+
+                    <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
                         <MatCardContent>
-                            <MatCardMedia Wide="true" ImageUrl="https://images.pexels.com/photos/8408085/pexels-photo-8408085.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"></MatCardMedia>
+                            <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(item.Imagen)"></MatCardMedia>
                             <div class="demo-mat-card-content">
-                                <MatHeadline6 class="demo-mat-card-clean-margin">
-                                    Our Changing Planet
+                                <MatHeadline6 class="demo-mat-card-clean-margin text-center">
+                                    <span class="p-2">@item.Nombre </span>
                                 </MatHeadline6>
-                                <MatSubtitle2 class="demo-mat-card-clean-margin">
-                                    by Kurt Wagner
+                                <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
+                                    @myTI.ToTitleCase(item.Categoria)
                                 </MatSubtitle2>
                             </div>
 
-                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
-                                Visit ten places on our planet that are undergoing the biggest changes today.
+                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin  m-3">
+                                @if (item.Descripcion.Length > 250)
+                                {
+                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-150)... </span>
+                                }
+                                else
+                                {
+                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-30)... </span>
+                                }
+
                             </MatBody2>
                         </MatCardContent>
-                        <MatCardActions>
-
-                            <MatCardActionIcons>
+                        <MatCardActions Style="position: absolute; bottom: 0;">
+                            <MatCardActionIcons >
                                 <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
                             </MatCardActionIcons>
                         </MatCardActions>
                     </MatCard>
                 </div>
-        }
+            }
 
+        }
+    }
+    else
+    {
+        <p>Loading...</p>
     }
 
 </div>
@@ -92,6 +127,16 @@
 @code {
     string SearchText = "";
     //para hacer el SearchText https://www.daveabrock.com/2021/01/14/blast-off-blazor-search-box/
+
+    public IEnumerable<Producto> producto { get; set; }
+
+    public string Message { get; set; }
+
+    public string tipoPro { get; set; } = "mascota";
+
+    TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+
+    Producto[] listProduct;
 
 
 
@@ -108,4 +153,27 @@
         Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
 
     }
+
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            producto = await ProducCampService.ListProduct();
+
+            listProduct = producto.Where(e => e.TipoProducto == 1).ToArray();
+
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+    public string getImage(string image)
+    {
+        return "images/imgmascota/" + image;
+
+    }
+
 }

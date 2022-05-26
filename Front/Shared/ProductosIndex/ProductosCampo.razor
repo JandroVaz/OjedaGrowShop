@@ -1,54 +1,74 @@
-﻿<style>
+﻿@using OjedaGrowShop.EF.Models
+@using OjedaGrowShop.EF.Services.Interfaces
+@using System.Globalization
+@inject IProductService ProducCampService
+
+<style>
     .card {
         box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
-        width:100% !important;
-        min-width:200px !important;
-        max-width:350px !important;
+        width: 100% !important;
+        min-width: 200px !important;
+        max-width: 350px !important;
         margin: 0 auto;
     }
 
-    @@media screen and (max-width:720px;){
-        
-    } 
+    @@media screen and (max-width:720px;) {
+    }
 </style>
 
 <div class="mt-5 mb-5 overflow-hidden">
     <div class="row">
-        <h3 data-aos="fade-right" >Planta, cuida y cosecha.</h3>
+        <h3 data-aos="fade-right">Planta, cuida y cosecha.</h3>
         <h4 data-aos="fade-left">¡Los mejores productos a tu disposición!</h4>
     </div>
     <MatThemeProvider Theme="@cardShopIndex">
         <div class="row justify-content-center gap-3 mt-4 mb-4">
-            @for (var i = 0; i < 3; i++)
+            @if (listProduct == null)
             {
-                <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
-
-                    <MatCard class="demo-mat-card  mx-auto mx-0 card">
-                        <MatCardContent>
-                            <MatCardMedia Wide="true" ImageUrl="https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg"></MatCardMedia>
-                            <div class="demo-mat-card-content">
-                                <MatHeadline6 class="demo-mat-card-clean-margin">
-                                    Our Changing Planet
-                                </MatHeadline6>
-                                <MatSubtitle2 class="demo-mat-card-clean-margin">
-                                    by Kurt Wagner
-                                </MatSubtitle2>
-                            </div>
-
-                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
-                                Visit ten places on our planet that are undergoing the biggest changes today.
-                            </MatBody2>
-                        </MatCardContent>
-                        <MatCardActions>
-
-                            <MatCardActionIcons>
-                                <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
-                            </MatCardActionIcons>
-                        </MatCardActions>
-                    </MatCard>
-                </div>
+                <p>loading...</p>
             }
+            else
+            {
 
+                @for (var i = 0; i < 3; i++)
+                {
+                    <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
+
+                        <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
+                            <MatCardContent>
+                                <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(listProduct[i].Imagen)"></MatCardMedia>
+                                <div class="demo-mat-card-content">
+                                    <MatHeadline6 class="demo-mat-card-clean-margin text-center">
+                                        <span class="p-2">@listProduct[i].Nombre </span>
+                                    </MatHeadline6>
+                                    <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
+                                        @myTI.ToTitleCase(listProduct[i].Categoria)
+                                    </MatSubtitle2>
+                                </div>
+
+                                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin m-3">
+
+                                    @if (listProduct[i].Descripcion.Length > 200)
+                                    {
+                                        <span>@listProduct[i].Descripcion.Substring(0,listProduct[i].Descripcion.Length-150)... </span>
+                                    }
+                                    else
+                                    {
+                                        <span>@listProduct[i].Descripcion.Substring(0,listProduct[i].Descripcion.Length-30)... </span>
+                                    }
+
+
+                                </MatBody2>
+                            </MatCardContent>
+                            <MatCardActions Style="position: absolute; bottom: 0;">
+                                <MatCardActionIcons>
+                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                </MatCardActionIcons>
+                            </MatCardActions>
+                        </MatCard>
+                    </div>
+                }
+            }
         </div>
     </MatThemeProvider>
 </div>
@@ -57,8 +77,17 @@
 
 @code {
 
-    [Inject]
-    IJSRuntime JS { get; set; }
+
+    public IEnumerable<Producto> producto { get; set; }
+
+    public string Message { get; set; }
+
+    public string tipoPro { get; set; } = "mascota";
+
+    TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+
+    Producto[] listProduct;
+
     [Inject]
     public IMatToaster Toaster { get; set; }
 
@@ -76,7 +105,28 @@
 
     public void anadirCarro()
     {
-                    Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+        Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            producto = await ProducCampService.ListProduct();
+
+            listProduct = producto.Where(e => e.TipoProducto == 2).ToArray();
+
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+    public string getImage(string image)
+    {
+        return "images/imgcampo/" + image;
 
     }
 }
