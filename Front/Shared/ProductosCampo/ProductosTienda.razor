@@ -1,4 +1,5 @@
-﻿@using OjedaGrowShop.EF.Models
+﻿@using Microsoft.AspNetCore.Mvc
+@using OjedaGrowShop.EF.Models
 @using OjedaGrowShop.EF.Services.Interfaces
 @using System.Globalization
 @inject IProductService ProducCampService
@@ -16,16 +17,8 @@
 </style>
 
 
-<div class="row">
-    <div class="text-center bg-blue-100">
-        <div class="row mx-auto my-0" style="min-width:180px; max-width:180px;">
-            <MatTextField Label="Producto" @bind-Value="SearchText" @bind-Value:event="inunput" />
-        </div>
-        <div class="row">
-            <label style="font-size:0.8rem;">¡Busca tu producto!</label>
-        </div>
-    </div>
-</div>
+
+
 <div class="row flex-wrap flex-column flex-md-row gap-5 justify-content-center" style="margin-top:50px; margin-bottom:50px">
 
     @if (listProduct != null)
@@ -36,84 +29,135 @@
             }*@
 
 
-        @foreach (Producto item in listProduct)
+
+        <div class="row">
+            <div class="text-center bg-blue-100">
+                <div class="row mx-auto my-0" style="min-width:180px; max-width:180px;">
+                    <MatTextField Label="Producto" @bind-Value="SearchText" @onblur="Busqueda" />
+                </div>
+                <div class="row">
+                    <label style="font-size:0.8rem;">¡Busca tu producto!</label>
+                </div>
+            </div>
+        </div>
+
+
+        if (listProduct.Count() > 0)
         {
-            @if (item.Id % 2 == 0)
+            @foreach (Producto item in listProduct)
             {
-                <div data-aos="flip-up" class="col-12 col-md-4 col-xl-3">
+                @if (item.Id % 2 == 0)
+                {
+                    <div data-aos="flip-up" class="col-12 col-md-4 col-xl-3">
 
-                    <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
-                        <MatCardContent >
-                            <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(item.Imagen)"></MatCardMedia>
-                            <div class="demo-mat-card-content">
-                                <MatHeadline6 class="demo-mat-card-clean-margin text-center">
-                                    <span class="p-2">@item.Nombre </span>
-                                </MatHeadline6>
-                                <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
-                                    @myTI.ToTitleCase(item.Categoria)
-                                </MatSubtitle2>
-                            </div>
+                        <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
+                            <MatCardContent>
+                                <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(item.Imagen)"></MatCardMedia>
+                                <div class="demo-mat-card-content">
+                                    <MatHeadline6 class="demo-mat-card-clean-margin text-center">
+                                        <span class="p-2">@item.Nombre </span>
+                                    </MatHeadline6>
+                                    <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
+                                        @myTI.ToTitleCase(item.Categoria)
+                                    </MatSubtitle2>
+                                </div>
 
-                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin m-3">
+                                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin m-3">
 
-                            @if (item.Descripcion.Length > 200)
-                                {
-                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-150)... </span>
-                                }
-                                else
-                                {
-                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-30)... </span>
-                                }
+                                    @if (item.Descripcion.Length > 200)
+                                    {
+                                        <span>
+                                            @item.Descripcion.Substring(0,item.Descripcion.Length-150)...
+                                            <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
 
+                                        </span>
+                                        
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            @item.Descripcion.Substring(0,item.Descripcion.Length-30)...
+                                            <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
+                                        </span>
+                                    }
+                                    
 
-                            </MatBody2>
-                        </MatCardContent>
-                        <MatCardActions Style="position: absolute; bottom: 0;">
-                            <MatCardActionIcons  >
-                                <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
-                            </MatCardActionIcons>
-                        </MatCardActions>
-                    </MatCard>
-                </div>
+                                </MatBody2>
+                            </MatCardContent>
+                            <MatCardActions Style="position: absolute; bottom: 0; width:100%">
+                                <MatCardActionIcons Class="justify-content-between">
+                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                    <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
+                                </MatCardActionIcons>
+                            </MatCardActions>
+                        </MatCard>
+                    </div>
+
+                }
+                else
+                {
+                    <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
+                        <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
+                            <MatCardContent>
+                                <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(item.Imagen)"></MatCardMedia>
+                                <div class="demo-mat-card-content">
+                                    <MatHeadline6 class="demo-mat-card-clean-margin text-center">
+                                        <span class="p-2">@item.Nombre </span>
+                                    </MatHeadline6>
+                                    <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
+                                        @myTI.ToTitleCase(item.Categoria)
+                                    </MatSubtitle2>
+                                </div>
+
+                                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin  m-3">
+                                    @if (item.Descripcion.Length > 250)
+                                    {
+                                        <span>
+                                            @item.Descripcion.Substring(0,item.Descripcion.Length-150)...
+                                            <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            @item.Descripcion.Substring(0,item.Descripcion.Length-30)...
+                                            <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
+                                        </span>
+                                    }
+                                </MatBody2>
+                            </MatCardContent>
+                            <MatCardActions Style="position: absolute; bottom: 0; width:100%">
+                                <MatCardActionIcons Class="justify-content-between">
+                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                    <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
+                                </MatCardActionIcons>
+                            </MatCardActions>
+                        </MatCard>
+                    </div>
+
+                }
+
 
             }
-            else
-            {
-                <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
-
-                    <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
-                        <MatCardContent>
-                            <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(item.Imagen)"></MatCardMedia>
-                            <div class="demo-mat-card-content">
-                                <MatHeadline6 class="demo-mat-card-clean-margin text-center">
-                                    <span class="p-2">@item.Nombre </span>
-                                </MatHeadline6>
-                                <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
-                                    @myTI.ToTitleCase(item.Categoria)
-                                </MatSubtitle2>
-                            </div>
-
-                            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin  m-3">
-                                @if (item.Descripcion.Length > 250)
-                                {
-                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-150)... </span>
-                                }
-                                else
-                                {
-                                    <span >@item.Descripcion.Substring(0,item.Descripcion.Length-30)... </span>
-                                }
-
-                            </MatBody2>
-                        </MatCardContent>
-                        <MatCardActions Style="position: absolute; bottom: 0;">
-                            <MatCardActionIcons >
-                                <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
-                            </MatCardActionIcons>
-                        </MatCardActions>
-                    </MatCard>
-                </div>
-            }
-
+            <MatDialog @bind-IsOpen="@dialogIsOpen" Style="z-index:1001">
+                <MatDialogTitle>@nomProd </MatDialogTitle>
+                <MatDialogContent Style="color:black; font-size:1.2rem;">
+                    <div class="text-center">
+                        <img src="@getImage(imgProd)" class="img-fluid" />
+                    </div>
+                    <p class="mt-5"><span style="font-weight:bold;">Categoría</span>:<br>@myTI.ToTitleCase(@categoriaProd)</p>
+                    <p><span style="font-weight:bold;">Detalles</span>:<br>@descrProd</p>
+                    <p><span style="font-weight:bold;">Precio</span>:<br>@precioProd €</p>
+                </MatDialogContent>
+                <MatDialogActions Class="justify-content-lg-between">
+                    <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
+                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                </MatDialogActions>
+            </MatDialog>
+        }
+        else
+        {
+            <p>No podemos encontrar el producto que buscas... :(</p>
         }
     }
     else
@@ -128,7 +172,7 @@
 </div>
 
 @code {
-    string SearchText = "";
+    public string SearchText { get; set; }
     //para hacer el SearchText https://www.daveabrock.com/2021/01/14/blast-off-blazor-search-box/
 
 
@@ -138,9 +182,29 @@
 
     public string tipoPro { get; set; } = "mascota";
 
+    //Datos de productos en el dialog
+
+    private int idProd = 0;
+
+    private string nomProd = string.Empty;
+
+    private string descrProd = string.Empty;
+
+    private string categoriaProd = string.Empty;
+
+    private double precioProd = 0;
+
+    private string imgProd = string.Empty;
+
+    //TextInfo para capitalizar, mayusculas, minusculas...
+
     TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
+    bool dialogIsOpen = false;
+
     Producto[] listProduct;
+    Producto[] listProductSearch;
+
 
     [Inject]
     public IMatToaster Toaster { get; set; }
@@ -161,9 +225,9 @@
         try
         {
             producto = await ProducCampService.ListProduct();
-
+            //Array de productos donde contendra los productos de campo
             listProduct = producto.Where(e => e.TipoProducto == 2).ToArray();
-
+            //Array de nombre de productos para filtrar
         }
         catch (Exception e)
         {
@@ -176,4 +240,47 @@
         return "images/imgcampo/" + image;
 
     }
+
+    public void Busqueda()
+    {
+
+        if (SearchText == null)
+        {
+            //Array de productos donde contendra los productos de campo
+            listProduct = producto.Where(e => e.TipoProducto == 2).ToArray();
+        }
+        else
+        {
+            //Array de productos donde contendra los productos de campo filtrado
+            listProduct = producto.Where(e => e.Nombre.ToLower().Contains(SearchText.ToLower()) && e.TipoProducto == 2).ToArray();
+        }
+    }
+
+    //Apertura de dialog
+
+    void OpenDialog(Producto producto)
+    {
+        dialogIsOpen = true;
+
+        idProd = producto.Id;
+        nomProd = producto.Nombre;
+        descrProd = producto.Descripcion;
+        precioProd = producto.Precio;
+        categoriaProd = producto.Categoria;
+        imgProd = producto.Imagen;
+    }
+
+    //Cierre
+    void OkClick()
+    {
+        dialogIsOpen = false;
+        idProd = 0;
+        nomProd = string.Empty;
+        descrProd = string.Empty;
+        precioProd = 0;
+        categoriaProd = string.Empty;
+        imgProd = string.Empty;
+    }
+
+
 }

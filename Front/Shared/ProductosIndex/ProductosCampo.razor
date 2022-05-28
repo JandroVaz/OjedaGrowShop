@@ -46,28 +46,48 @@
                                     </MatSubtitle2>
                                 </div>
 
-                                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin m-3">
+                                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin m-3 text-left">
 
                                     @if (listProduct[i].Descripcion.Length > 200)
                                     {
                                         <span>@listProduct[i].Descripcion.Substring(0,listProduct[i].Descripcion.Length-150)... </span>
+                                        <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(listProduct[i]))">Leer más</MatButton>
+
                                     }
                                     else
                                     {
                                         <span>@listProduct[i].Descripcion.Substring(0,listProduct[i].Descripcion.Length-30)... </span>
+                                        <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(listProduct[i]))">Leer más</MatButton>
+
                                     }
 
 
                                 </MatBody2>
                             </MatCardContent>
-                            <MatCardActions Style="position: absolute; bottom: 0;">
-                                <MatCardActionIcons>
+                                                        <MatCardActions Style="position: absolute; bottom: 0; width:100%">
+                                <MatCardActionIcons Class="justify-content-between">
                                     <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                    <MatButton Style="font-size:1.2rem">@listProduct[i].Precio €</MatButton>
                                 </MatCardActionIcons>
                             </MatCardActions>
                         </MatCard>
                     </div>
                 }
+                            <MatDialog @bind-IsOpen="@dialogIsOpen" Style="z-index:1001">
+                <MatDialogTitle>@nomProd </MatDialogTitle>
+                <MatDialogContent Style="color:black; font-size:1.2rem;" Class="text-left">
+                    <div class="text-center">
+                        <img src="@getImage(imgProd)" class="img-fluid" />
+                    </div>
+                    <p class="mt-5"><span style="font-weight:bold;">Categoría</span>:<br>@myTI.ToTitleCase(@categoriaProd)</p>
+                    <p><span style="font-weight:bold;">Detalles</span>:<br>@descrProd</p>
+                    <p><span style="font-weight:bold;">Precio</span>:<br>@precioProd €</p>
+                </MatDialogContent>
+                <MatDialogActions Class="justify-content-lg-between">
+                    <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
+                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                </MatDialogActions>
+            </MatDialog>
             }
         </div>
     </MatThemeProvider>
@@ -84,7 +104,25 @@
 
     public string tipoPro { get; set; } = "mascota";
 
+        //TextInfo para capitalizar, mayusculas, minusculas...
+
     TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+
+     //Datos de productos en el dialog
+
+    private int idProd = 0;
+
+    private string nomProd = string.Empty;
+
+    private string descrProd = string.Empty;
+
+    private string categoriaProd = string.Empty;
+
+    private double precioProd = 0;
+
+    private string imgProd = string.Empty;
+
+    bool dialogIsOpen = false;
 
     Producto[] listProduct;
 
@@ -128,5 +166,31 @@
     {
         return "images/imgcampo/" + image;
 
+    }
+
+        //Apertura de dialog
+
+    void OpenDialog(Producto producto)
+    {
+        dialogIsOpen = true;
+
+        idProd = producto.Id;
+        nomProd = producto.Nombre;
+        descrProd = producto.Descripcion;
+        precioProd = producto.Precio;
+        categoriaProd = producto.Categoria;
+        imgProd = producto.Imagen;
+    }
+
+    //Cierre
+    void OkClick()
+    {
+        dialogIsOpen = false;
+        idProd = 0;
+        nomProd = string.Empty;
+        descrProd = string.Empty;
+        precioProd = 0;
+        categoriaProd = string.Empty;
+        imgProd = string.Empty;
     }
 }
