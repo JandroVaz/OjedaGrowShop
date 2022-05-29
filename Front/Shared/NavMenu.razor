@@ -17,22 +17,32 @@
     .enlacesMenu {
         width: 100% !important;
         height: 100% !important;
-        padding: 20px;
+        padding: 28px;
+        align-items: center;
         text-transform: uppercase;
         transition: all 300ms ease;
+        font-weight: bold;
     }
 
-        .enlacesMenu > a {
-            font-weight: bold;
-            color: black !important;
+    .navLink {
+        text-decoration: none;
+    }
+
+        .navLink:hover {
             text-decoration: none;
+            padding-left: 25px;
+            padding-right: 25px;
         }
 
-        .enlacesMenu:hover {
-            transform: scale(1.1);
-            background-color: #338a3e;
-            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-        }
+    .enlacesMenu:hover {
+        transform: scale(1.1);
+        background-color: #338a3e;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+    }
+
+    .enlacesMenu:active {
+        background-color: #338a3e;
+    }
 
 </style>
 
@@ -44,47 +54,54 @@
     </button>
     <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto  mb-lg-0 gap-2 mt-md-0" style="background-color: #009624 !important; ">
-            <li class="enlacesMenu">
-                <NavLink href="" Match="NavLinkMatch.All">
-                    <span onclick="event.preventDefault;" class="nav-link w-100  text-white" aria-current="page">Home</span>
+            <li class="">
+                <NavLink class="navLink" href="" Match="NavLinkMatch.All">
+                    <span onclick="event.preventDefault;" class="nav-link w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Home</span>
                 </NavLink>
             </li>
-            <li class="enlacesMenu">
-                <NavLink href="campo">
-                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white" aria-current="page">Campo</span>
+            <li class="">
+                <NavLink class="navLink" href="campo">
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Campo</span>
                 </NavLink>
 
             </li>
-            <li class="enlacesMenu">
-                <NavLink href="mascotas">
-                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white" aria-current="page">Mascotas</span>
+            <li class="">
+                <NavLink class="navLink" href="mascotas">
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Mascotas</span>
                 </NavLink>
             </li>
-            <li class="enlacesMenu">
-                <NavLink href="contacto">
-                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white" aria-current="page">Contacto</span>
+            <li class="">
+                <NavLink class="navLink" href="contacto">
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Contacto</span>
                 </NavLink>
             </li>
         </ul>
         @if (!authorizationHelper.IsLoged)
         {
-            <ul class="navbar-nav" style="background-color: #009624 !important; ">
+            <ul class="navbar-nav " style="background-color: #009624 !important; ">
                 <li class="nav-item dropdown">
-                    <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="nav-link dropdown-toggle text-white enlacesMenu  pl-3 pr-3" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Iniciar / Registrar
                     </span>
+
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li class="enlacesMenu dropdown-item">
-                            <NavLink href="login">
-                                <span class="nav-link  w-100" aria-current="page">Login</span>
+
+
+                        <li class="dropdown-item">
+                            <NavLink class="navLink" href="login">
+                                <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Login</span>
                             </NavLink>
                         </li>
-                        <li class="enlacesMenu dropdown-item">
-                            <NavLink href="register">
-                                <span class="nav-link  w-100" aria-current="page">Registrarme</span>
+                        <li class="dropdown-item">
+                            <NavLink class="navLink" href="register">
+                                <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Registrarme</span>
                             </NavLink>
                         </li>
                     </ul>
+
+
+
+
                 </li>
             </ul>
         }
@@ -92,25 +109,35 @@
         {
             <ul class="navbar-nav" style="background-color: #009624 !important; margin-right:45px;">
                 <li class="nav-item dropdown">
-                    <span class="nav-link  text-white dropdown-toggle enlacesMenu" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="nav-link  text-white enlacesMenu dropdown-toggle  pl-3 pr-3" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         @user
                     </span>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        @if (authorizationHelper.IsAdmin)
-                        {
-                            <li class="enlacesMenu dropdown-item">
-                                <NavLink href="panelAdmin">
-                                    <span class="nav-link  w-100" aria-current="page">Panel Administrador</span>
+                    @if (authorizationHelper.IsAdmin)
+                    {
+                        <ul class="dropdown-menu" style="left:-150px !important;" aria-labelledby="navbarDropdown">
+                            <li class="dropdown-item">
+                                <NavLink class="navLink" href="panelAdmin">
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Panel Administrador</span>
+                                </NavLink>
+                                <NavLink class="navLink" href="">
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut">Salir</span>
                                 </NavLink>
                             </li>
-                        }
-                        <li class="enlacesMenu dropdown-item">
-                            <NavLink href="">
-                                <span class="nav-link  w-100" aria-current="page" @onclick="LogOut">Salir</span>
-                            </NavLink>
-                        </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li class="dropdown-item">
+                                <NavLink class="navLink" href="">
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut">Salir</span>
+                                </NavLink>
+                            </li>
+                        </ul>
+                    }
 
-                    </ul>
+
+
                 </li>
             </ul>
         }

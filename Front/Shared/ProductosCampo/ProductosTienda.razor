@@ -3,10 +3,11 @@
 @using OjedaGrowShop.EF.Services.Interfaces
 @using System.Globalization
 @inject IProductService ProducCampService
-
-@code {
-
-}
+@inject ICartService cartService
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
+@using OjedaGrowShop.Helper
+@inject AuthorizationHelper authorizationHelper
 <style>
     .card {
         box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
@@ -28,7 +29,7 @@
 
             }*@
 
-
+        @idUsuario
 
         <div class="row">
             <div class="text-center bg-blue-100">
@@ -71,7 +72,7 @@
                                             <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
 
                                         </span>
-                                        
+
                                     }
                                     else
                                     {
@@ -80,13 +81,20 @@
                                             <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
                                         </span>
                                     }
-                                    
+
 
                                 </MatBody2>
                             </MatCardContent>
                             <MatCardActions Style="position: absolute; bottom: 0; width:100%">
                                 <MatCardActionIcons Class="justify-content-between">
-                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                    @if (authorizationHelper.IsLoged)
+                                    {
+                                        <MatButton Icon="@MatIconNames.Shopping_cart"
+                               OnClick="
+                                                (async => anadirCarro(item.Id)
+
+                                                 )">Añadir al carrito</MatButton>
+                                    }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
                             </MatCardActions>
@@ -128,7 +136,10 @@
                             </MatCardContent>
                             <MatCardActions Style="position: absolute; bottom: 0; width:100%">
                                 <MatCardActionIcons Class="justify-content-between">
-                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                    @if (authorizationHelper.IsLoged)
+                                    {
+                                        <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="(async => cartService.AddProduct(idUsuario,item.Id))">Añadir al carrito</MatButton>
+                                    }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
                             </MatCardActions>
@@ -151,7 +162,10 @@
                 </MatDialogContent>
                 <MatDialogActions Class="justify-content-lg-between">
                     <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
-                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                    @if (authorizationHelper.IsLoged)
+                    {
+                        <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="(async => cartService.AddProduct(idUsuario,idProd))">Añadir al carrito</MatButton>
+                    }
                 </MatDialogActions>
             </MatDialog>
         }
@@ -175,6 +189,7 @@
     public string SearchText { get; set; }
     //para hacer el SearchText https://www.daveabrock.com/2021/01/14/blast-off-blazor-search-box/
 
+    public int idUsuario = 0;
 
     public IEnumerable<Producto> producto { get; set; }
 
@@ -214,9 +229,17 @@
     }
 
 
-    public void anadirCarro()
+    public async Task anadirCarro(int idProduct)
     {
-        Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+        if(await cartService.AddProduct(idUsuario, idProduct))
+        {
+            Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+        }
+        else
+        {
+            Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "MAL");
+        }
+
 
     }
 
@@ -227,7 +250,7 @@
             producto = await ProducCampService.ListProduct();
             //Array de productos donde contendra los productos de campo
             listProduct = producto.Where(e => e.TipoProducto == 2).ToArray();
-            //Array de nombre de productos para filtrar
+            idUsuario = await ProtectedSessionStore.GetAsync<int>("userId");
         }
         catch (Exception e)
         {
