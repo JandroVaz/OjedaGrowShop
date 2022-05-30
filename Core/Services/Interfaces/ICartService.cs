@@ -10,5 +10,8 @@ namespace OjedaGrowShop.EF.Services.Interfaces
     {
         Task<bool> AddProduct(int idUser, int idProduct);
         Task<Carrito> GetIdCar(int idUser);
+        Task<IEnumerable<CarritoProducto>> ListProductCar(int idUser);
+        Task<IEnumerable<Producto>> ListProduct(int idUser);
+        Task<Producto> GetProdById(int id);
     }
 }

@@ -56,23 +56,27 @@
         <ul class="navbar-nav me-auto  mb-lg-0 gap-2 mt-md-0" style="background-color: #009624 !important; ">
             <li class="">
                 <NavLink class="navLink" href="" Match="NavLinkMatch.All">
-                    <span onclick="event.preventDefault;" class="nav-link w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Home</span>
+                    <span onclick="event.preventDefault;" class="nav-link w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">
+                        <i class="bi bi-house-door-fill"></i>  Home</span>
                 </NavLink>
             </li>
             <li class="">
                 <NavLink class="navLink" href="campo">
-                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Campo</span>
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">
+                        <i class="bi bi-tree-fill"></i>  Campo</span>
                 </NavLink>
 
             </li>
             <li class="">
                 <NavLink class="navLink" href="mascotas">
-                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Mascotas</span>
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">
+                         <i class="bi bi-heart-fill"></i> Mascotas</span>
                 </NavLink>
             </li>
             <li class="">
                 <NavLink class="navLink" href="contacto">
-                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">Contacto</span>
+                    <span onclick="event.preventDefault;" class="nav-link  w-100  text-white enlacesMenu pl-3 pr-3" aria-current="page">
+                         <i class="bi bi-person-square"></i>  Contacto</span>
                 </NavLink>
             </li>
         </ul>
@@ -81,7 +85,7 @@
             <ul class="navbar-nav " style="background-color: #009624 !important; ">
                 <li class="nav-item dropdown">
                     <span class="nav-link dropdown-toggle text-white enlacesMenu  pl-3 pr-3" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Iniciar / Registrar
+                        <i class="bi bi-person"></i>  Iniciar / Registrar
                     </span>
 
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -89,12 +93,14 @@
 
                         <li class="dropdown-item">
                             <NavLink class="navLink" href="login">
-                                <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Login</span>
+                                <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">
+                                    <i class="bi bi-person-fill"></i>  Login</span>
                             </NavLink>
                         </li>
                         <li class="dropdown-item">
                             <NavLink class="navLink" href="register">
-                                <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Registrarme</span>
+                                <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">
+                                    <i class="bi bi-person-plus-fill"></i>  Registrarme</span>
                             </NavLink>
                         </li>
                     </ul>
@@ -108,7 +114,7 @@
         else
         {
             <ul class="navbar-nav" style="background-color: #009624 !important; margin-right:45px;">
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown ">
                     <span class="nav-link  text-white enlacesMenu dropdown-toggle  pl-3 pr-3" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         @user
                     </span>
@@ -118,6 +124,9 @@
                             <li class="dropdown-item">
                                 <NavLink class="navLink" href="panelAdmin">
                                     <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Panel Administrador</span>
+                                </NavLink>
+                                <NavLink class="navLink" href="carrito">
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Carrito</span>
                                 </NavLink>
                                 <NavLink class="navLink" href="">
                                     <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut">Salir</span>
@@ -129,6 +138,9 @@
                     {
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="dropdown-item">
+                                <NavLink class="navLink" href="carrito">
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Carrito</span>
+                                </NavLink>
                                 <NavLink class="navLink" href="">
                                     <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut">Salir</span>
                                 </NavLink>

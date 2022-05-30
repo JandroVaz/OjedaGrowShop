@@ -42,9 +42,7 @@ namespace OjedaGrowShop.EF.Services
                 //Comprobamos si el producto ya existe en el carrito, en caso contrario se crea el producto en el carrito
                 if (__ojedaContext.CarritoProductos.Any(e => e.IdProducto == idProduct && e.IdCarrito == idCarrito))
                 {
-               
-                    List<CarritoProducto> cartProdList = await __ojedaContext.CarritoProductos.ToListAsync();
-
+           
                     CarritoProducto cartProd = __ojedaContext.CarritoProductos.FirstOrDefault( e => e.IdCarrito == idCarrito);
                     cartProd.CantidadProducto = cartProd.CantidadProducto + 1;
                     
@@ -107,5 +105,74 @@ namespace OjedaGrowShop.EF.Services
         {
             return await __ojedaContext.Carritos.FindAsync(idusuario);
         }
+
+        public async Task<IEnumerable<CarritoProducto>> ListProductCar(int idUser)
+        {
+
+            int idCarrito = 0;
+            //Comprobamos si el carrito del usuario existe, si existe, en caso contrario lo crea
+            bool cartExist = __ojedaContext.Carritos.Any(e => e.Idusuario == idUser);
+            if (cartExist)
+            {
+                //Guardamos todos los carritos
+                List<Carrito> cartList = new List<Carrito>();
+                cartList = __ojedaContext.Carritos.ToList();
+                foreach (Carrito itemCart in cartList)
+                {
+                    if (itemCart.Idusuario == idUser)
+                    {
+                        idCarrito = itemCart.Id;
+                    }
+                }
+                List<CarritoProducto> productCartList = await __ojedaContext.CarritoProductos.Where(e => e.IdCarrito == idCarrito).ToListAsync();
+                return productCartList;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        //Listamos los productos del cliente
+        public async Task<IEnumerable<Producto>> ListProduct(int idUser)
+        {
+
+            int idCarrito = 0;
+            //Comprobamos si el carrito del usuario existe, si existe, en caso contrario lo crea
+            bool cartExist = __ojedaContext.Carritos.Any(e => e.Idusuario == idUser);
+            if (cartExist)
+            {
+                //Guardamos todos los carritos
+                List<Carrito> cartList = new List<Carrito>();
+                cartList = __ojedaContext.Carritos.ToList();
+                foreach (Carrito itemCart in cartList)
+                {
+                    if (itemCart.Idusuario == idUser)
+                    {
+                        idCarrito = itemCart.Id;
+                    }
+                }
+                List<CarritoProducto> productCartList = await __ojedaContext.CarritoProductos.Where(e => e.IdCarrito == idCarrito).ToListAsync();
+                List<Producto> productProductoList = new List<Producto>();
+
+                foreach (CarritoProducto productProducto in productCartList)
+                {
+                    productProductoList.Add(await GetProdById(productProducto.IdProducto));
+                }
+
+                return productProductoList;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        //GET BY ID
+        public async Task<Producto> GetProdById(int id)
+        {
+            return await __ojedaContext.Productos.FindAsync(id);
+        }
+
     }
 }

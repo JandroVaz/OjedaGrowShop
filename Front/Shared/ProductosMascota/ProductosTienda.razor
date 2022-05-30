@@ -1,7 +1,12 @@
-﻿@using OjedaGrowShop.EF.Models
+﻿@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.EF.Models
 @using OjedaGrowShop.EF.Services.Interfaces
 @using System.Globalization
+@using OjedaGrowShop.Helper
 @inject IProductService ProducCampService
+@inject ICartService cartService
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject AuthorizationHelper authorizationHelper
 <style>
     .card {
         box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
@@ -76,7 +81,14 @@
                             </MatCardContent>
                             <MatCardActions Style="position: absolute; bottom: 0; width:100%">
                                 <MatCardActionIcons Class="justify-content-between">
-                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                    @if (authorizationHelper.IsLoged)
+                                    {
+                                        <MatButton Icon="@MatIconNames.Shopping_cart"
+                               OnClick="
+                                                (async => anadirCarro(item.Id)
+
+                                                 )">Añadir al carrito</MatButton>
+                                    }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
                             </MatCardActions>
@@ -118,7 +130,14 @@
                             </MatCardContent>
                             <MatCardActions Style="position: absolute; bottom: 0; width:100%">
                                 <MatCardActionIcons Class="justify-content-between">
-                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                                    @if (authorizationHelper.IsLoged)
+                                    {
+                                        <MatButton Icon="@MatIconNames.Shopping_cart"
+                               OnClick="
+                                                (async => anadirCarro(item.Id)
+
+                                                 )">Añadir al carrito</MatButton>
+                                    }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
                             </MatCardActions>
@@ -139,7 +158,11 @@
                 </MatDialogContent>
                 <MatDialogActions Class="justify-content-lg-between">
                     <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
-                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
+                    @if (authorizationHelper.IsLoged)
+                    {
+                        <MatButton Icon="@MatIconNames.Shopping_cart"
+                       OnClick="(async => anadirCarro(idProd))">Añadir al carrito</MatButton>
+                    }
                 </MatDialogActions>
             </MatDialog>
 
@@ -160,6 +183,8 @@
 @code {
     string SearchText = "";
     //para hacer el SearchText https://www.daveabrock.com/2021/01/14/blast-off-blazor-search-box/
+
+    public int idUsuario = 0;
 
     public IEnumerable<Producto> producto { get; set; }
 
@@ -197,9 +222,17 @@
     }
 
 
-    public void anadirCarro()
+    public async Task anadirCarro(int idProduct)
     {
-        Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+        if (await cartService.AddProduct(idUsuario, idProduct))
+        {
+            Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Carrito");
+        }
+        else
+        {
+            Helper.MatToastHelper.Show(MatToastType.Danger, "Ha ocurrido un error en la compra, contacte con un administrador", "Carrito");
+        }
+
 
     }
 
@@ -211,6 +244,8 @@
             producto = await ProducCampService.ListProduct();
 
             listProduct = producto.Where(e => e.TipoProducto == 1).ToArray();
+
+            idUsuario = await ProtectedSessionStore.GetAsync<int>("userId");
 
         }
         catch (Exception e)
