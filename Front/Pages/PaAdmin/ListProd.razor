@@ -1,26 +1,27 @@
 ﻿@page "/listProd"
+@using OjedaGrowShop.EF.DTOS
 @using OjedaGrowShop.EF.Models
 @using OjedaGrowShop.EF.Services
 @using OjedaGrowShop.EF.Services.Interfaces
-@inject NavigationManager NavigationManager
-@inject NavigationManager MyNavigationManager
-@inject IProductMascService ProducMascService
-@inject IProductService ProducCampService
-@using OjedaGrowShop.Helper
-@inject AuthorizationHelper authorizationHelper
 @using Microsoft.AspNetCore.ProtectedBrowserStorage
 @using OjedaGrowShop.Shared.ProductosIndex
-@inject ProtectedSessionStorage ProtectedSessionStore
+@using OjedaGrowShop.Helper
 
+@inject IProductService ProducCampService
+@inject IPhotoService photoService
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject AuthorizationHelper authorizationHelper
 
 <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
     <NavMenu />
 </nav>
 
-<div class="container mt-4 mb-4" style="height:650px;">
+<div class="container mt-4 mb-4" style="min-height:650px;">
 
 
-    @if (productosCampos == null)
+    @if (listProduct == null)
     {
         <p><em>Loading...</em></p>
     }
@@ -30,8 +31,8 @@
             <h3></h3>
             <MatThemeProvider Theme="@styleTable">
                 <MatSelect Label="Tipo de producto" @bind-Value="tipoPro">
-                    <MatOptionString Value="campo">Campo</MatOptionString>
-                    <MatOptionString Value="mascota">Mascota</MatOptionString>
+                    <MatOptionString Value="campo">Mascota</MatOptionString>
+                    <MatOptionString Value="mascota">Campo</MatOptionString>
                 </MatSelect>
             </MatThemeProvider>
         </p>
@@ -39,35 +40,44 @@
         @if (!tipoPro.Equals("mascota"))
         {
             <div class="row">
-                <h2>Listado de productos de campo.</h2>
+                
+                <h2>Listado de productos de mascotas.</h2>
             </div>
 
             <MatThemeProvider Theme="@styleTable">
-                <MatTable Items="@productosCampos" class="mat-elevation-z5" Style="max-width:750x;">
+                <MatTable Items="@listProduct.Where(e => e.TipoProducto == 1)" class="mat-elevation-z5" Style="max-width:750x;">
                     <MatTableHeader>
                         <th>Id</th>
                         <th>Nombre del producto</th>
                         <th>Descripción</th>
                         <th>Categoría</th>
                         <th>Precio</th>
+                        <th>Imagen</th>
                         <th>Modificar</th>
                         <th>Borrar</th>
                     </MatTableHeader>
                     <MatTableRow>
                         <td>@context.Id</td>
-                        <td>@context.NombrePro</td>
-                        <td>@context.Descripcion</td>
+                        <td>@context.Nombre</td>
+                        <td style="min-width:350px;">@context.Descripcion</td>
                         <td>@context.Categoria</td>
                         <td>@context.Precio €</td>
-                        <td><a class="btn btn-primary" href="/modifyUser/@context.Id">Modificar</a></td>
+                        <td>
+                            <div style="width:200px; height:200px;overflow:hidden;">
+                                <img class="img-fluid" src="images/imgmascota/@context.Imagen" FolderName="@context.Imagen" />
+                            </div>
+                        </td>
+                        <td><a class="btn btn-primary" href="/modifyProduct/@context.Id">Modificar</a></td>
+
                         <td>
                             <MatThemeProvider Theme="@delete">
                                 <MatButton Icon="close"
                                    OnClick="@(async() =>
                                         {await ProducCampService.DeleteProd(@context.Id);
-                                         productoCampos = await ProducCampService.GetProductoCampos();
-                                         productosCampos = productoCampos.ToArray();
-                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borraco correctamente!", "Eliminar");})"
+                                         producto = await ProducCampService.ListProduct();
+                                         listProduct = producto.ToArray();
+                                         photoService.DeletePhoto("mascota",@context.Imagen);
+                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borrado correctamente!", "Eliminar");})"
                                    Raised="true">Borrar</MatButton>
                             </MatThemeProvider>
                         </td>
@@ -81,34 +91,41 @@
         else
         {
             <div class="row">
-                <h2>Listado de productos de mascotas.</h2>
+                <h2>Listado de productos de campo.</h2>
             </div>
             <MatThemeProvider Theme="@styleTable">
-                <MatTable Items="@productoMascotas" class="mat-elevation-z5" Style="max-width:750x;">
+                <MatTable Items="@listProduct.Where(e => e.TipoProducto == 2)" class="mat-elevation-z5" Style="max-width:750x;">
                     <MatTableHeader>
                         <th>Id</th>
                         <th>Nombre del producto</th>
                         <th>Descripción</th>
                         <th>Categoría</th>
                         <th>Precio</th>
+                        <th>Imagen</th>
                         <th>Modificar</th>
                         <th>Borrar</th>
                     </MatTableHeader>
                     <MatTableRow>
                         <td>@context.Id</td>
-                        <td>@context.NombreProducto</td>
-                        <td>@context.Descripcion</td>
+                        <td>@context.Nombre</td>
+                        <td style="min-width:350px;">@context.Descripcion</td>
                         <td>@context.Categoria</td>
                         <td>@context.Precio €</td>
-                        <td><a class="btn btn-primary" href="/modifyUser/@context.Id">Modificar</a></td>
+                        <td>
+                            <div style="width:200px; height:200px; overflow:hidden;">
+                                <img class="img-fluid" src="images/imgcampo/@context.Imagen" FolderName="@context.Imagen" />
+                            </div>
+                        </td>
+                        <td><a class="btn btn-primary" href="/modifyProduct/@context.Id">Modificar</a></td>
                         <td>
                             <MatThemeProvider Theme="@delete">
                                 <MatButton Icon="close"
                                    OnClick="@(async() =>
-                                        {await ProducMascService.DeleteProd(@context.Id);
-                                         productoMacota = await ProducMascService.GetProductoMascotas();
-                                         productoMascotas = productoMacota.ToArray();
-                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borraco correctamente!", "Eliminar");})"
+                                        {await ProducCampService.DeleteProd(@context.Id);
+                                         producto = await ProducCampService.ListProduct();
+                                         listProduct = producto.ToArray();
+                                         photoService. DeletePhoto("campo",@context.Imagen);
+                                         Helper.MatToastHelper.Show(MatToastType.Danger, "¡El producto se ha borrado correctamente!", "Eliminar");})"
                                    Raised="true">Borrar</MatButton>
                             </MatThemeProvider>
                         </td>
@@ -130,11 +147,14 @@
 
 
 @code {
-    public IEnumerable<ProductoCampo> productoCampos { get; set; }
-    public IEnumerable<ProductoMascotum> productoMacota { get; set; }
+    public IEnumerable<Producto> producto { get; set; }
+    
+
     public string Message { get; set; }
 
-    public string tipoPro { get; set; } = "";
+    public string tipoPro { get; set; } = "mascota";
+
+    Producto[] listProduct;
 
     MatTheme delete = new MatTheme()
         {
@@ -156,19 +176,16 @@
     }
 
 
-    ProductoCampo[] productosCampos;
-    ProductoMascotum[] productoMascotas;
+    
+  
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            productoCampos = await ProducCampService.GetProductoCampos();
-            productoMacota = await ProducMascService.GetProductoMascotas();
-
-            productosCampos = productoCampos.ToArray();
-            productoMascotas = productoMacota.ToArray();
-
-
+            producto = await ProducCampService.ListProduct();
+      
+            listProduct = producto.ToArray();
+        
         }
         catch (Exception e)
         {
@@ -176,8 +193,14 @@
         }
     }
 
+    //IMAGEN
+    private IList<PhotoWrapper> GetPhotoList(string folderName)
+    {
+        return photoService.ListWatermarkPhotos(folderName);
+    }
 
 
+    //PERMISOS DE ADMIN
     protected override void OnInitialized()
     {
         if (!authorizationHelper.IsAdmin)

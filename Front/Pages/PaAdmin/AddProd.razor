@@ -1,6 +1,7 @@
 ﻿@page "/addProd"
 @using System.ComponentModel.DataAnnotations
 @using System.IO
+@using OjedaGrowShop.EF.DTOS
 @using OjedaGrowShop.EF.Services
 @using OjedaGrowShop.EF.Services.Interfaces
 @inject NavigationManager NavigationManager
@@ -12,7 +13,8 @@
 @using OjedaGrowShop.Shared.ProductosIndex;
 @inject ProtectedSessionStorage ProtectedSessionStore
 @inject IProductService ProductService
-@inject IProductMascService ProducMascService
+@inject IPhotoService photoService
+
 <style>
     .formClass {
         margin-top: 125px !important;
@@ -37,14 +39,15 @@
         <DataAnnotationsValidator />
         <div class="mx-auto my-0 text-center formClass" style="">
 
-            <h2>Agregar nuevo usuario</h2>
+            <h2>Agregar un nuevo producto.</h2>
             <MatThemeProvider Theme="@formLogin">
-                <MatSelect Label="TIPO PRODUCTO" @bind-Value="addProd.Prod">
-                    <MatOptionString Value="campo">Campo</MatOptionString>
-                    <MatOptionString Value="mascota">Mascotas</MatOptionString>
-                </MatSelect>
-                <ValidationMessage For="@(() => addProd.Prod)" />
-
+                <p>
+                    <MatSelect Label="TIPO PRODUCTO" @bind-Value="addProd.Prod">
+                        <MatOptionString Value="campo">Campo</MatOptionString>
+                        <MatOptionString Value="mascota">Mascotas</MatOptionString>
+                    </MatSelect>
+                    <ValidationMessage For="@(() => addProd.Prod)" />
+                </p>
 
                 <p>
                     <MatTextField Label="Nombre producto" @bind-Value="addProd.NomPro" />
@@ -99,8 +102,13 @@
                 </p>
 
                 <p>
-                    <MatTextField Label="Ubicación imagen" @bind-Value="addProd.Imagen" />
-                    <ValidationMessage For="@(() =>addProd.Imagen)" />
+
+                    <MatFileUpload OnChange="@PhotoProd" Label="Introduce la imagen del producto"></MatFileUpload>
+                    @foreach (var f in listImg)
+                    {
+                        <div>@f</div>
+                    }
+
                 </p>
 
                 <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
@@ -122,6 +130,10 @@
 
         };
 
+    //imagen
+    List<string> listImg = new List<string>();
+    private IList<IMatFileUploadEntry> filesToSave = new List<IMatFileUploadEntry>();
+
     [Inject]
     IJSRuntime JS { get; set; }
     [Inject]
@@ -140,6 +152,20 @@
             Helper.MatToastHelper.Toaster = Toaster;
         }
     }
+
+    //Añade la imagen al array
+    void PhotoProd(IMatFileUploadEntry[] files)
+    {
+        foreach (var file in files)
+        {
+            listImg.Add($"Name: {file.Name} - Size: {file.Size}");
+        }
+        filesToSave = files;
+    }
+
+
+
+
 
     RegisterModel addProd = new RegisterModel();
 
@@ -161,9 +187,6 @@
         //Producto mascota
         public string Categoria2 { get; set; }
 
-        [Required(ErrorMessage = "El campo 'Imagen' es obligatorio")]
-        public string Imagen { get; set; }
-
         [Required(ErrorMessage = "El campo 'Categoria del producto' es obligatorio")]
         public string Prod { get; set; } = "";
     }
@@ -173,42 +196,56 @@
     {
         int result = 0;
 
-        if (addProd.Prod.Equals("campo"))
+        if (filesToSave.Any())
         {
-            result = await ProductService.AddProd(new EF.Models.ProductoCampo()
-                {
-                    Id = 0,
-                    NombrePro = addProd.NomPro,
-                    Descripcion = addProd.Descripcion,
-                    Precio = addProd.Precio,
-                    Categoria = addProd.Categoria,
-                    Imagen = addProd.Imagen
-                });
-        }
-        else
-        {
-            result = await ProducMascService.AddProd(new EF.Models.ProductoMascotum()
-                {
-                    Id = 0,
-                    NombreProducto = addProd.NomPro,
-                    Descripcion = addProd.Descripcion,
-                    Precio = addProd.Precio,
-                    Categoria = addProd.Categoria2,
-                    Imagen = addProd.Imagen
-                });
-        }
 
 
 
+            List<PhotoDto> photoDtos = new List<PhotoDto>();
+            foreach (IMatFileUploadEntry file in filesToSave)
+            {
+                MemoryStream memoryStream = new MemoryStream();
 
-        if (result > 0)
-        {
-            Helper.MatToastHelper.Show(MatToastType.Info, "El producto se ha creado correctamente", "Registro de producto");
-            MyNavigationManager.NavigateTo("/panelAdmin");
-        }
-        else
-        {
-            Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error, contacte con el administrador!", "Registro");
+                await file.WriteToStreamAsync(memoryStream);
+
+                photoDtos.Add(new PhotoDto()
+                    {
+                        MemoryStream = memoryStream,
+                        namePhoto = file.Name
+                    });
+            }
+            //subida del archivo
+            PhotoCreationResult photoCreationResult = photoService.CreateImage(photoDtos.FirstOrDefault().MemoryStream, photoDtos.FirstOrDefault().namePhoto, addProd.Prod);
+            if (photoCreationResult.OperationResult > -1)
+            {
+                result = await ProductService.AddProd(new EF.Models.Producto()
+                    {
+                        Id = 0,
+                        Nombre = addProd.NomPro,
+                        Descripcion = addProd.Descripcion,
+                        Precio = addProd.Precio.GetValueOrDefault(),
+                        TipoProducto = addProd.Prod.Equals("mascota") ? 1 : 2,
+                        Categoria = addProd.Prod.Equals("mascota") ? addProd.Categoria2 : addProd.Categoria,
+                        Imagen = photoDtos.FirstOrDefault().namePhoto
+                    });
+
+            }
+            else
+            {
+                Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error, No se ha subido la imagen!", "Registro");
+            }
+
+
+
+            if (result > 0)
+            {
+                Helper.MatToastHelper.Show(MatToastType.Info, "El producto se ha creado correctamente", "Registro de producto");
+                MyNavigationManager.NavigateTo("/panelAdmin");
+            }
+            else
+            {
+                Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error, contacte con el administrador!", "Registro");
+            }
         }
     }
 }

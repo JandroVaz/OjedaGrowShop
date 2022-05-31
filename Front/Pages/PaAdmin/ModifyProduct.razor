@@ -1,0 +1,132 @@
+﻿@page "/modifyProduct/{id:int}"
+@using OjedaGrowShop.EF.Models
+@using OjedaGrowShop.EF.Services
+@using OjedaGrowShop.EF.Services.Interfaces
+@using OjedaGrowShop.Helper
+@inject NavigationManager NavigationManager
+@inject NavigationManager MyNavigationManager
+@inject AuthorizationHelper authorizationHelper
+@inject IProductService ProductService
+
+<style>
+    .formClass {
+        margin-top: 125px !important;
+        padding: 1rem;
+        max-width: 650px;
+        min-width: 300px;
+    }
+
+    .redirect {
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+</style>
+
+
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+    <NavMenu />
+</nav>
+
+<div class="container mb-4 estiloFormulario align-content-center">
+    <EditForm Model="@producto">
+        <DataAnnotationsValidator />
+        <div class="mx-auto my-0 text-center formClass" style="">
+
+            <h2>Agregar un nuevo producto.</h2>
+            <MatThemeProvider Theme="@formLogin">
+                <p>
+                    <MatTextField Label="Nombre producto" @bind-Value="producto.Nombre" />
+                    
+                </p>
+                <p>
+                    <MatTextField @bind-Value="producto.Descripcion" Label="Introduce la descripción del producto" TextArea="true" Style="width:100%;max-width:450px; height:150px;"></MatTextField>
+                  
+
+                </p>
+                <p>
+                    <MatNumericUpDownField Label="Precio del producto"
+                                           @bind-Value="producto.Precio"
+                                           FieldType="MatNumericUpDownFieldType.Currency"
+                                           DecimalPlaces=2>
+                    </MatNumericUpDownField>
+                    
+
+                </p>
+                <p>
+
+                    @if (producto.TipoProducto == 2)
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="producto.Categoria">
+                            <MatOptionString Value="herramienta">Herramientas</MatOptionString>
+                            <MatOptionString Value="semillas">Semillas</MatOptionString>
+                            <MatOptionString Value="mantenimiento">Mantenimiento</MatOptionString>
+                        </MatSelect>
+                    
+                    }
+                    else 
+                    {
+                        <MatSelect Label="Categoría del producto" @bind-Value="producto.Categoria">
+                            <MatOptionString Value="accesorio">Accesorio</MatOptionString>
+                            <MatOptionString Value="alimentacion">Alimentación</MatOptionString>
+                            <MatOptionString Value="cuidados">Cuidados</MatOptionString>
+                        </MatSelect>
+                    }
+                </p>
+
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatButton Type="submit" @onclick="UpdateProd" Raised="true">Modificar</MatButton>
+                    <MatButton Type="submit" Raised="true" Link="/listProd">Cancelar</MatButton>
+                </div>
+            </MatThemeProvider>
+        </div>
+    </EditForm>
+</div>
+
+
+
+
+
+@code {
+        [Parameter]
+    public int id {get; set;}
+
+    private Producto producto = new Producto();
+
+
+        //Colores del tema del login
+    MatTheme formLogin = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    [Inject]
+    IJSRuntime JS { get; set; }
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+
+        protected override async Task OnInitializedAsync()
+    {
+        producto = await ProductService.GetProdById(id);
+    }
+
+
+        protected async Task UpdateProd()
+    {
+        await ProductService.UpdateProd(producto);
+        Helper.MatToastHelper.Show(MatToastType.Info, "Producto modificado correctamente", "Update");
+        NavigationManager.NavigateTo("/listProd");
+
+    }
+
+
+
+        protected override void OnInitialized()
+    {
+        if (!authorizationHelper.IsAdmin)
+        {
+            MyNavigationManager.NavigateTo("/");
+        }
+    }
+}

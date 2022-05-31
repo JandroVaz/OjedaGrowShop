@@ -1,0 +1,146 @@
+﻿@page "/carrito"
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.EF.Models
+@using System.Globalization
+@using OjedaGrowShop.EF.Services.Interfaces
+@using OjedaGrowShop.Helper
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject AuthorizationHelper authorizationHelper
+@inject ICartService cartService
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
+        <NavMenu />
+</nav>
+
+<div class="container mx-auto my-0" style="min-height:635px;">
+
+   
+    @if (listProduct != null)
+    {
+    <div class="row gap-2 mt-4 mb-4 justify-content-between">
+        <div class="col-12 col-md-7 ">
+            <div class="row">             
+                <h2>Carrito de la compra de @nombreUsu</h2>
+            </div>
+            <MatThemeProvider Theme="@styleTable">
+                <MatTable Items="@listProduct" class="mat-elevation-z5" Style="max-width:750x;">
+                    <MatTableHeader>
+                        <th>Id</th>
+                        <th>Nombre del producto</th>            
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Borrar</th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td>@context.Id</td>
+                        <td style="min-width:280px;">@context.Nombre</td>                      
+                        <td>@context.Categoria</td>
+                        <td>@context.Precio €</td>
+                        <td>
+                            <MatThemeProvider Theme="@delete">
+                                <MatButton Icon="close" Raised="true">Eliminar</MatButton>
+                            </MatThemeProvider>
+                        </td>
+                    </MatTableRow>
+                </MatTable>
+                <MatButton Type="submit" Raised="true" Link="/">Volver</MatButton>
+            </MatThemeProvider>
+
+        </div>
+        <div class="col-12 col-md-3 gap-2 mt-5">
+
+            <div class="row text-center">
+                <h3>Total: @total €</h3>
+                <div style="max-width:350px; margin: 0 auto;">
+                    <img src="images/logoogs.png" class="img-fluid" alt="imagen empresa"/>
+                </div>
+            </div>
+            <div class="row text-center gap-4 justify-content-center">
+            <MatThemeProvider Theme="@styleTable">
+                <MatButton Type="submit" Raised="true" style="max-width:200px;">Completar compra</MatButton>
+            </MatThemeProvider>
+            <MatThemeProvider Theme="@delete">
+                <MatButton Type="submit" Raised="true" style="max-width:200px;">Vaciar carrito</MatButton>
+            </MatThemeProvider>
+            </div>
+        </div>
+    </div>
+
+            
+
+    }
+    else
+    {
+        <p>No Ha añadido ningún producto a su carrito... :(</p>
+    }
+
+
+</div>
+
+
+
+@code {
+    //Paraca productos del carrito
+    public IEnumerable<CarritoProducto> productoCarrito { get; set; }
+
+    //Para cada producto
+    public IEnumerable<Producto> productProductoList {get; set;}
+
+
+    //TextInfo para capitalizar, mayusculas, minusculas...
+
+    TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+
+    public IEnumerable<Producto> producto { get; set; }
+
+    Producto[] listProduct;
+
+    CarritoProducto[] listProductCart;
+
+    public int total = 0;
+
+    public int idUsuario = 0;
+    public string nombreUsu = string.Empty;
+
+    public string Message { get; set; }
+
+
+    MatTheme delete = new MatTheme()
+        {
+            Primary = "#c62828",
+        };
+
+    MatTheme styleTable = new MatTheme()
+        {
+            Primary = "#009624",
+
+        };
+
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+    protected override void OnInitialized()
+    {
+        Helper.MatToastHelper.Toaster = Toaster;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            idUsuario = await ProtectedSessionStore.GetAsync<int>("userId");
+            nombreUsu = await ProtectedSessionStore.GetAsync<string>("user");
+            //Para obtener la id y la cantidad del producto
+            productoCarrito = await cartService.ListProductCar(idUsuario);
+
+            productProductoList = await cartService.ListProduct(idUsuario);
+
+            listProduct = productProductoList.ToArray();
+
+            listProductCart = productoCarrito.ToArray();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+}
