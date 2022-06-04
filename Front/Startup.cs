@@ -56,6 +56,7 @@ namespace OjedaGrowShop
             services.AddTransient<ICartService, CartService>(
                 e => new CartService(new OJEDAContext())
                 );
+            services.AddTransient<IExportPDFService, ExportPDFService>();
             services.AddTransient<IPhotoService, PhotoService>();
             services.AddScoped<AuthorizationHelper>();
             services.AddSingleton<MailServices>();
@@ -101,7 +102,9 @@ namespace OjedaGrowShop
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
+                endpoints.MapControllerRoute("mvc", "{controller}/{action}");
                 endpoints.MapFallbackToPage("/_Host");
+
             });
         }
     }

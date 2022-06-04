@@ -8,6 +8,8 @@
 @inject ProtectedSessionStorage ProtectedSessionStore
 @inject AuthorizationHelper authorizationHelper
 @inject ICartService cartService
+@inject IExportPDFService exportPDFService
+@inject NavigationManager Navigation
 <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
     <NavMenu />
 </nav>
@@ -39,15 +41,17 @@
                                 <td>@context.Categoria</td>
                                 <td>@context.Precio €</td>
                                 <td>@context.Cantidad</td>
-                                <td>@context.PrecioTotal €</td>
+                                <td>@Math.Round(context.PrecioTotal,2) €</td>
                                 <td>
                                     <MatThemeProvider Theme="@delete">
-                                        <MatButton Icon="close" Raised="true"
+                                        <MatButton Disabled="disableButton" Icon="close" Raised="true"
                                            OnClick="@(async() =>
                                         {
+                                            disableButton=true;
                                             await cartService.DeleteProdById(@context.IdProducto);
                                             await LoadCart();
                                             Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha eliminado el producto!", "Eliminar");
+                                            disableButton=false;
                                         }
                                     )">Eliminar</MatButton>
                                     </MatThemeProvider>
@@ -68,10 +72,10 @@
                     </div>
                     <div class="row text-center gap-4 justify-content-center">
                         <MatThemeProvider Theme="@styleTable">
-                            <MatButton Type="submit" Raised="true" style="max-width:200px;">Completar compra</MatButton>
+                            <MatButton Disabled="disableButton" Type="submit" Raised="true" style="max-width:200px;" OnClick="(async() =>await ExportPDF())">Completar compra</MatButton>
                         </MatThemeProvider>
                         <MatThemeProvider Theme="@delete">
-                            <MatButton Type="submit" Raised="true" style="max-width:200px;" OnClick="(async() =>await DeleteCart())">Vaciar carrito</MatButton>
+                            <MatButton Disabled="disableButton" Type="submit" Raised="true" style="max-width:200px;" OnClick="(async() =>await DeleteCart())">Vaciar carrito</MatButton>
                         </MatThemeProvider>
                     </div>
                 </div>
@@ -79,13 +83,17 @@
         }
         else
         {
-            <p>No Ha añadido ningún producto a su carrito... :(</p>
+            <div class="text-center mt-5">
+                <h2>No Ha añadido ningún producto a su carrito... :(</h2>
+            </div>
 
         }
     }
     else
     {
-        <p>No Ha añadido ningún producto a su carrito... :(</p>
+        <div class="text-center mt-5">
+            <h2>No Ha añadido ningún producto a su carrito... :(</h2>
+        </div>
     }
 
 
@@ -118,6 +126,7 @@
 
     public string Message { get; set; }
 
+    private bool disableButton = false;
 
     MatTheme delete = new MatTheme()
         {
@@ -171,6 +180,7 @@
 
     public async Task DeleteCart()
     {
+        disableButton = true;
         EF.Models.Carrito cart = await cartService.GetCartById(idUsuario);
         if (await cartService.DeleteCartById(cart.Id))
         {
@@ -181,7 +191,30 @@
         {
             Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error!", "Error");
         }
+        disableButton = false;
 
+    }
+
+    public async Task ExportPDF()
+    {
+        disableButton = true;
+        string path = exportPDFService.ExportPDF($"{nombreUsu}.pdf", productProductoList.ToList(), total, nombreUsu);
+        if (!string.IsNullOrEmpty(path))
+        {
+            Navigation.NavigateTo($"/invoice/{path.Split(".")[0]}", true);
+            //DELETE PDF del servidor, una vez se le entrega al cliente
+            EF.Models.Carrito cart = await cartService.GetCartById(idUsuario);
+            await cartService.DeleteCartById(cart.Id);
+            exportPDFService.DeletePDF($"{nombreUsu}.pdf");
+            Helper.MatToastHelper.Show(MatToastType.Info, "¡Compra realizada satisfactoriamente!", "Compra");
+            Navigation.NavigateTo("/");
+
+        }
+        else
+        {
+            Helper.MatToastHelper.Show(MatToastType.Danger, "¡Algo no ha salido bien!", "Compra");
+        }
+        disableButton = false;
     }
 
 }

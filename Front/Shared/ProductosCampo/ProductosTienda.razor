@@ -34,7 +34,7 @@
         <div class="row">
             <div class="text-center bg-blue-100">
                 <div class="row mx-auto my-0" style="min-width:180px; max-width:180px;">
-                    <MatTextField Label="Producto" @bind-Value="SearchText" @onblur="Busqueda" />
+                    <MatTextField Label="Producto" ValueChanged="(string i) => Busqueda(i)" />
                 </div>
                 <div class="row">
                     <label style="font-size:0.8rem;">¡Busca tu producto!</label>
@@ -43,7 +43,7 @@
         </div>
 
 
-        if (listProduct.Count() > 0)
+        if (listProduct.Any())
         {
             @foreach (Producto item in listProduct)
             {
@@ -89,11 +89,8 @@
                                 <MatCardActionIcons Class="justify-content-between">
                                     @if (authorizationHelper.IsLoged)
                                     {
-                                        <MatButton Icon="@MatIconNames.Shopping_cart"
-                               OnClick="
-                                                (async => anadirCarro(item.Id)
-
-                                                 )">Añadir al carrito</MatButton>
+                                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart"
+                                            OnClick="(async() => await anadirCarro(item.Id))">Añadir al carrito</MatButton>
                                     }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
@@ -138,7 +135,8 @@
                                 <MatCardActionIcons Class="justify-content-between">
                                     @if (authorizationHelper.IsLoged)
                                     {
-                                        <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="(async => cartService.AddProduct(idUsuario,item.Id))">Añadir al carrito</MatButton>
+                                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart" OnClick="(async() => 
+                                            await anadirCarro(item.Id))">Añadir al carrito</MatButton>
                                     }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
@@ -164,7 +162,7 @@
                     <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
                     @if (authorizationHelper.IsLoged)
                     {
-                        <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="(async => cartService.AddProduct(idUsuario,idProd))">Añadir al carrito</MatButton>
+                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart" OnClick="(async() => await anadirCarro(idProd))">Añadir al carrito</MatButton>
                     }
                 </MatDialogActions>
             </MatDialog>
@@ -176,7 +174,7 @@
     }
     else
     {
-        <p>Loading...</p>
+        <MatProgressCircle Indeterminate="true" FourColored="true" />
     }
 
 
@@ -211,6 +209,8 @@
 
     private string imgProd = string.Empty;
 
+    private bool disableButton = false;
+
     //TextInfo para capitalizar, mayusculas, minusculas...
 
     TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
@@ -231,6 +231,7 @@
 
     public async Task anadirCarro(int idProduct)
     {
+        disableButton = true;
         if(await cartService.AddProduct(idUsuario, idProduct))
         {
             Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
@@ -239,7 +240,7 @@
         {
             Helper.MatToastHelper.Show(MatToastType.Danger, "Ha ocurrido un error en la compra, contacte con un administrador", "Carrito");
         }
-
+        disableButton = false;
 
     }
 
@@ -264,10 +265,10 @@
 
     }
 
-    public void Busqueda()
+    public void Busqueda(string name)
     {
 
-        if (SearchText == null)
+        if (string.IsNullOrEmpty(name))
         {
             //Array de productos donde contendra los productos de campo
             listProduct = producto.Where(e => e.TipoProducto == 2).ToArray();
@@ -275,7 +276,7 @@
         else
         {
             //Array de productos donde contendra los productos de campo filtrado
-            listProduct = producto.Where(e => e.Nombre.ToLower().Contains(SearchText.ToLower()) && e.TipoProducto == 2).ToArray();
+            listProduct = producto.Where(e => e.Nombre.ToLower().Contains(name.ToLower()) && e.TipoProducto == 2).ToArray();
         }
     }
 
