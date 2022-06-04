@@ -1,5 +1,6 @@
 ﻿@page "/carrito"
 @using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.EF.DTOS
 @using OjedaGrowShop.EF.Models
 @using System.Globalization
 @using OjedaGrowShop.EF.Services.Interfaces
@@ -8,65 +9,79 @@
 @inject AuthorizationHelper authorizationHelper
 @inject ICartService cartService
 <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #009624 !important; z-index:100; ">
-        <NavMenu />
+    <NavMenu />
 </nav>
 
 <div class="container mx-auto my-0" style="min-height:635px;">
 
-   
-    @if (listProduct != null)
+
+    @if (productProductoList != null)
     {
-    <div class="row gap-2 mt-4 mb-4 justify-content-between">
-        <div class="col-12 col-md-7 ">
-            <div class="row">             
-                <h2>Carrito de la compra de @nombreUsu</h2>
-            </div>
-            <MatThemeProvider Theme="@styleTable">
-                <MatTable Items="@listProduct" class="mat-elevation-z5" Style="max-width:750x;">
-                    <MatTableHeader>
-                        <th>Id</th>
-                        <th>Nombre del producto</th>            
-                        <th>Categoría</th>
-                        <th>Precio</th>
-                        <th>Borrar</th>
-                    </MatTableHeader>
-                    <MatTableRow>
-                        <td>@context.Id</td>
-                        <td style="min-width:280px;">@context.Nombre</td>                      
-                        <td>@context.Categoria</td>
-                        <td>@context.Precio €</td>
-                        <td>
-                            <MatThemeProvider Theme="@delete">
-                                <MatButton Icon="close" Raised="true">Eliminar</MatButton>
-                            </MatThemeProvider>
-                        </td>
-                    </MatTableRow>
-                </MatTable>
-                <MatButton Type="submit" Raised="true" Link="/">Volver</MatButton>
-            </MatThemeProvider>
+        @if (productProductoList.Any())
+        {
+            <div class="row gap-2 mt-4 mb-4 justify-content-between">
+                <div class="col-12 col-md-7 ">
+                    <div class="row">
+                        <h2>Carrito de la compra de @nombreUsu</h2>
+                    </div>
+                    <MatThemeProvider Theme="@styleTable">
+                        <MatTable Items="@listProduct" class="mat-elevation-z5" Style="max-width:750x;">
+                            <MatTableHeader>
+                                <th>Nombre del producto</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Precio Total</th>
+                                <th>Borrar</th>
+                            </MatTableHeader>
+                            <MatTableRow>
+                                <td style="min-width:280px;">@context.Nombre</td>
+                                <td>@context.Categoria</td>
+                                <td>@context.Precio €</td>
+                                <td>@context.Cantidad</td>
+                                <td>@context.PrecioTotal €</td>
+                                <td>
+                                    <MatThemeProvider Theme="@delete">
+                                        <MatButton Icon="close" Raised="true"
+                                           OnClick="@(async() =>
+                                        {
+                                            await cartService.DeleteProdById(@context.IdProducto);
+                                            await LoadCart();
+                                            Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha eliminado el producto!", "Eliminar");
+                                        }
+                                    )">Eliminar</MatButton>
+                                    </MatThemeProvider>
+                                </td>
+                            </MatTableRow>
+                        </MatTable>
+                        <MatButton Type="submit" Raised="true" Link="/">Volver</MatButton>
+                    </MatThemeProvider>
 
-        </div>
-        <div class="col-12 col-md-3 gap-2 mt-5">
+                </div>
+                <div class="col-12 col-md-3 gap-2 mt-5">
 
-            <div class="row text-center">
-                <h3>Total: @total €</h3>
-                <div style="max-width:350px; margin: 0 auto;">
-                    <img src="images/logoogs.png" class="img-fluid" alt="imagen empresa"/>
+                    <div class="row text-center">
+                        <h3>Total: @Math.Round(total,2) €</h3>
+                        <div style="max-width:350px; margin: 0 auto;">
+                            <img src="images/logoogs.png" class="img-fluid" alt="imagen empresa" />
+                        </div>
+                    </div>
+                    <div class="row text-center gap-4 justify-content-center">
+                        <MatThemeProvider Theme="@styleTable">
+                            <MatButton Type="submit" Raised="true" style="max-width:200px;">Completar compra</MatButton>
+                        </MatThemeProvider>
+                        <MatThemeProvider Theme="@delete">
+                            <MatButton Type="submit" Raised="true" style="max-width:200px;" OnClick="(async() =>await DeleteCart())">Vaciar carrito</MatButton>
+                        </MatThemeProvider>
+                    </div>
                 </div>
             </div>
-            <div class="row text-center gap-4 justify-content-center">
-            <MatThemeProvider Theme="@styleTable">
-                <MatButton Type="submit" Raised="true" style="max-width:200px;">Completar compra</MatButton>
-            </MatThemeProvider>
-            <MatThemeProvider Theme="@delete">
-                <MatButton Type="submit" Raised="true" style="max-width:200px;">Vaciar carrito</MatButton>
-            </MatThemeProvider>
-            </div>
-        </div>
-    </div>
+        }
+        else
+        {
+            <p>No Ha añadido ningún producto a su carrito... :(</p>
 
-            
-
+        }
     }
     else
     {
@@ -83,7 +98,7 @@
     public IEnumerable<CarritoProducto> productoCarrito { get; set; }
 
     //Para cada producto
-    public IEnumerable<Producto> productProductoList {get; set;}
+    public IEnumerable<ProductoCarritoDTO> productProductoList { get; set; }
 
 
     //TextInfo para capitalizar, mayusculas, minusculas...
@@ -92,11 +107,11 @@
 
     public IEnumerable<Producto> producto { get; set; }
 
-    Producto[] listProduct;
+    ProductoCarritoDTO[] listProduct;
 
     CarritoProducto[] listProductCart;
 
-    public int total = 0;
+    public double total = 0;
 
     public int idUsuario = 0;
     public string nombreUsu = string.Empty;
@@ -129,18 +144,44 @@
             idUsuario = await ProtectedSessionStore.GetAsync<int>("userId");
             nombreUsu = await ProtectedSessionStore.GetAsync<string>("user");
             //Para obtener la id y la cantidad del producto
-            productoCarrito = await cartService.ListProductCar(idUsuario);
+            await LoadCart();
 
-            productProductoList = await cartService.ListProduct(idUsuario);
-
-            listProduct = productProductoList.ToArray();
-
-            listProductCart = productoCarrito.ToArray();
         }
         catch (Exception e)
         {
             Message = e.Message;
         }
+    }
+
+    public async Task LoadCart()
+    {
+        total = 0;
+        productProductoList = await cartService.ListProduct(idUsuario);
+
+        if (productProductoList != null)
+        {
+            listProduct = productProductoList.ToArray();
+            foreach (ProductoCarritoDTO productoCarritoDTO in listProduct)
+            {
+                total += productoCarritoDTO.PrecioTotal;
+            }
+
+        }
+    }
+
+    public async Task DeleteCart()
+    {
+        EF.Models.Carrito cart = await cartService.GetCartById(idUsuario);
+        if (await cartService.DeleteCartById(cart.Id))
+        {
+            await LoadCart();
+            Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha vaciado el carrito!", "Vaciar carrito");
+        }
+        else
+        {
+            Helper.MatToastHelper.Show(MatToastType.Danger, "¡Ha ocurrido un error!", "Error");
+        }
+
     }
 
 }
