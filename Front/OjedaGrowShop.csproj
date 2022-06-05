@@ -39,4 +39,6 @@
     <ProjectReference Include="..\Core\OjedaGrowShop.EF.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json.schemastore.org/vs-2017.3.host.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

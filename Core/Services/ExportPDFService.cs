@@ -13,10 +13,17 @@ namespace OjedaGrowShop.EF.Services
     {
         public string ExportPDF(string fileName, IList<ProductoCarritoDTO> listProd, double totalCompra, string usuario)
         {
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Document doc = new Document();
-            string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/temp/{fileName}");
-            PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
+            string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\temp\\{fileName.Trim().ToLower()}");
+            var fs = new FileStream(path, FileMode.OpenOrCreate);
+            if (doc == null)
+            {
+                doc = new Document();
+            }
+            PdfWriter_GetInstance(doc, fs);
+            //PdfWriter.GetInstance(doc, fs);
             // Importante Abrir el documento
             doc.Open();
             // Creamos un titulo personalizado con tamaño de fuente 18 y color Azul
@@ -55,13 +62,13 @@ namespace OjedaGrowShop.EF.Services
             table.AddCell("Precio Total");
 
 
-            foreach(ProductoCarritoDTO prod in listProd)
+            foreach (ProductoCarritoDTO prod in listProd)
             {
                 table.AddCell(prod.Nombre);
                 table.AddCell(prod.Categoria);
-                table.AddCell($"{Math.Round( prod.Precio,2)} €");
+                table.AddCell($"{Math.Round(prod.Precio, 2)} €");
                 table.AddCell(prod.Cantidad.ToString());
-                table.AddCell($"{Math.Round(prod.PrecioTotal,2)} €");
+                table.AddCell($"{Math.Round(prod.PrecioTotal, 2)} €");
             }
             // Agregamos la tabla al documento
             doc.Add(table);
@@ -70,16 +77,18 @@ namespace OjedaGrowShop.EF.Services
 
             Paragraph totalBuy = new Paragraph
             {
-                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18f )
+                Font = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18f)
             };
-            totalBuy.Add($"TOTAL: {Math.Round(totalCompra,2)} €");
+            totalBuy.Add($"TOTAL: {Math.Round(totalCompra, 2)} €");
             doc.Add(totalBuy);
             // Ceramos el documento
             doc.Close();
             return fileName;
 
-        }
 
+
+
+        }
         public PhotoStreamWrapper GetPDFStream(string path)
         {
             string fileName = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/temp/{path}.pdf");
@@ -94,7 +103,6 @@ namespace OjedaGrowShop.EF.Services
                 Type = fileName.Split('.')[1]
             };
         }
-
         public int DeletePDF(string name)
         {
             string fileName = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/temp/{name}.pdf");
@@ -110,6 +118,29 @@ namespace OjedaGrowShop.EF.Services
             {
                 return 0;
             }
+        }
+        public PdfWriter PdfWriter_GetInstance(Document document, FileStream filestrm)
+        {
+            PdfWriter pdfwr = null;
+
+            for (int repeat = 0; repeat < 6; repeat++)
+            {
+                try
+                {
+                    pdfwr = PdfWriter.GetInstance(document, filestrm);
+                    break; //created, then exit loop
+                }
+                catch // instantiation of PdfWriter failed, then pause
+                {
+                    System.Threading.Thread.Sleep(300);
+                }
+            }
+            if (pdfwr == null)
+            {
+                throw new Exception("iTextSharp PdfWriter was not instantiated");
+            }
+
+            return pdfwr;
         }
 
 

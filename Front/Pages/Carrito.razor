@@ -198,6 +198,7 @@
     public async Task ExportPDF()
     {
         disableButton = true;
+
         string path = exportPDFService.ExportPDF($"{nombreUsu}.pdf", productProductoList.ToList(), total, nombreUsu);
         if (!string.IsNullOrEmpty(path))
         {
@@ -215,6 +216,8 @@
             Helper.MatToastHelper.Show(MatToastType.Danger, "¡Algo no ha salido bien!", "Compra");
         }
         disableButton = false;
+        
+
     }
 
 }

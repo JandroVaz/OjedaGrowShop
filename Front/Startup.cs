@@ -34,6 +34,14 @@ namespace OjedaGrowShop
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFromAll",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader());
+            });
             services.AddSingleton<WeatherForecastService>();
             services.AddMatBlazor();
             services.AddProtectedBrowserStorage();
