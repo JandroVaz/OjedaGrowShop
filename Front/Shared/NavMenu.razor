@@ -44,6 +44,16 @@
         background-color: #338a3e;
     }
 
+    .ancho{
+        width: auto;
+    }
+
+    @@media (max-width: 725px) {
+      .ancho{
+        width: 100%;
+    }
+    } 
+
 </style>
 
 
@@ -113,23 +123,23 @@
         }
         else
         {
-            <ul class="navbar-nav" style="background-color: #009624 !important; margin-right:45px;">
+            <ul class="navbar-nav ancho" style="background-color: #009624 !important; margin-right:45px;">
                 <li class="nav-item dropdown ">
-                    <span class="nav-link  text-white enlacesMenu dropdown-toggle  pl-3 pr-3" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        @user
+                    <span class="nav-link  text-white enlacesMenu dropdown-toggle pl-3 pr-3 text-left text-md-center" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-person-circle"></i>  @user                           
                     </span>
                     @if (authorizationHelper.IsAdmin)
                     {
                         <ul class="dropdown-menu" style="left:-150px !important;" aria-labelledby="navbarDropdown">
                             <li class="dropdown-item">
                                 <NavLink class="navLink" href="panelAdmin">
-                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Panel Administrador</span>
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page"><i class="bi bi-gear"></i>  Panel Administrador</span>
                                 </NavLink>
                                 <NavLink class="navLink" href="carrito">
-                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Carrito</span>
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page"><i class="bi bi-cart"></i>  Carrito</span>
                                 </NavLink>
                                 <NavLink class="navLink" href="">
-                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut">Salir</span>
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut"><i class="bi bi-box-arrow-right"></i>  Salir</span>
                                 </NavLink>
                             </li>
                         </ul>
@@ -139,10 +149,10 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li class="dropdown-item">
                                 <NavLink class="navLink" href="carrito">
-                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page">Carrito</span>
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page"><i class="bi bi-cart"></i>Carrito</span>
                                 </NavLink>
                                 <NavLink class="navLink" href="">
-                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut">Salir</span>
+                                    <span class="nav-link enlacesMenu w-100  pl-3 pr-3" aria-current="page" @onclick="LogOut"><i class="bi bi-box-arrow-right"></i>Salir</span>
                                 </NavLink>
                             </li>
                         </ul>

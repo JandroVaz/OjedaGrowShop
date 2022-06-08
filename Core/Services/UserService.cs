@@ -55,22 +55,15 @@ namespace OjedaGrowShop.EF.Services
 
         public bool getRolUser(string user)
         {
-            return __ojedaContext.Users.Any(u => u.Name.Equals(user) && u.Rol.Equals("admin"));
+            return __ojedaContext.Users.Any(u => u.Name.Trim().ToLower().Equals(user.Trim().ToLower()) && u.Rol.Equals("admin"));
         }
 
         //Recogemos la ID del usuario actual
         public int getUserId(string user)
         {
-            int userId = 0;
-            foreach (var u in __ojedaContext.Users)
-            {
-                if (u.Name == user)
-                {
-                    userId = u.Id;
-                }
-            }
-
-            return userId;
+            return __ojedaContext.Users
+                .FirstOrDefault(u => u.Name.Trim().ToLower()
+                    .Equals(user.Trim().ToLower())).Id;
         }
 
         //Recogemos todos los usuarios de la base de datos

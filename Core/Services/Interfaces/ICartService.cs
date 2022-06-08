@@ -1,4 +1,5 @@
-﻿using OjedaGrowShop.EF.Models;
+﻿using OjedaGrowShop.EF.DTOS;
+using OjedaGrowShop.EF.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +12,10 @@ namespace OjedaGrowShop.EF.Services.Interfaces
         Task<bool> AddProduct(int idUser, int idProduct);
         Task<Carrito> GetIdCar(int idUser);
         Task<IEnumerable<CarritoProducto>> ListProductCar(int idUser);
-        Task<IEnumerable<Producto>> ListProduct(int idUser);
+        Task<IEnumerable<ProductoCarritoDTO>> ListProduct(int idUser);
         Task<Producto> GetProdById(int id);
+        Task<bool> DeleteProdById(int id);
+        Task<bool> DeleteCartById(int id);
+        Task<Carrito> GetCartById(int id);
     }
 }

@@ -20,7 +20,8 @@
 <div class="row">
     <div class="text-center bg-blue-100">
         <div class="row mx-auto my-0" style="min-width:180px; max-width:180px;">
-            <MatTextField Label="Producto" @bind-Value="SearchText" @onblur="Busqueda" />
+            <MatTextField Label="Producto" ValueChanged="(string i) => Busqueda(i)"  />
+            @*<MatAutocompleteList FullWidth="false" Items="@options" TItem="string" Label="Pick one"></MatAutocompleteList>*@
         </div>
         <div class="row">
             <label style="font-size:0.8rem;">¡Busca tu producto!</label>
@@ -83,11 +84,8 @@
                                 <MatCardActionIcons Class="justify-content-between">
                                     @if (authorizationHelper.IsLoged)
                                     {
-                                        <MatButton Icon="@MatIconNames.Shopping_cart"
-                               OnClick="
-                                                (async => anadirCarro(item.Id)
-
-                                                 )">Añadir al carrito</MatButton>
+                                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart"
+                                            OnClick="(async() => await anadirCarro(item.Id))">Añadir al carrito</MatButton>
                                     }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
@@ -132,11 +130,8 @@
                                 <MatCardActionIcons Class="justify-content-between">
                                     @if (authorizationHelper.IsLoged)
                                     {
-                                        <MatButton Icon="@MatIconNames.Shopping_cart"
-                               OnClick="
-                                                (async => anadirCarro(item.Id)
-
-                                                 )">Añadir al carrito</MatButton>
+                                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart"
+                                            OnClick="(async() => await anadirCarro(item.Id))">Añadir al carrito</MatButton>
                                     }
                                     <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
@@ -160,8 +155,8 @@
                     <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
                     @if (authorizationHelper.IsLoged)
                     {
-                        <MatButton Icon="@MatIconNames.Shopping_cart"
-                       OnClick="(async => anadirCarro(idProd))">Añadir al carrito</MatButton>
+                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart"
+                      OnClick="(async() => await anadirCarro(idProd))">Añadir al carrito</MatButton>
                     }
                 </MatDialogActions>
             </MatDialog>
@@ -169,13 +164,16 @@
         }
         else
         {
-            <p>No podemos encontrar el producto que buscas... :(</p>
+            <div class="text-center">
+                <h2>No podemos encontrar el producto que buscas... :(</h2>
+            </div>
         }
     }
     else
     {
-
-        <p>Loading...</p>
+        <div class="text-center">
+            <MatProgressCircle Indeterminate="true" FourColored="true" />
+        </div>
     }
 
 </div>
@@ -212,7 +210,11 @@
 
     private string imgProd = string.Empty;
 
+    string[] options = new string[0];
+
     bool dialogIsOpen = false;
+
+    private bool disableButton = false;
 
     [Inject]
     public IMatToaster Toaster { get; set; }
@@ -224,6 +226,7 @@
 
     public async Task anadirCarro(int idProduct)
     {
+        disableButton = true;
         if (await cartService.AddProduct(idUsuario, idProduct))
         {
             Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Carrito");
@@ -232,7 +235,7 @@
         {
             Helper.MatToastHelper.Show(MatToastType.Danger, "Ha ocurrido un error en la compra, contacte con un administrador", "Carrito");
         }
-
+        disableButton = false;
 
     }
 
@@ -244,6 +247,11 @@
             producto = await ProducCampService.ListProduct();
 
             listProduct = producto.Where(e => e.TipoProducto == 1).ToArray();
+
+            if (listProduct.Any())
+            {
+                options = listProduct.Select(s => s.Nombre).ToList().ToArray(); 
+            }
 
             idUsuario = await ProtectedSessionStore.GetAsync<int>("userId");
 
@@ -261,10 +269,10 @@
     }
 
     //Funcion para la busqueda por filtrado
-    public void Busqueda()
+    public void Busqueda(string name)
     {
 
-        if (SearchText == null)
+        if (string.IsNullOrEmpty(name))
         {
             //Array de productos donde contendra los productos de campo
             listProduct = producto.Where(e => e.TipoProducto == 1).ToArray();
@@ -272,7 +280,7 @@
         else
         {
             //Array de productos donde contendra los productos de campo filtrado
-            listProduct = producto.Where(e => e.Nombre.ToLower().Contains(SearchText.ToLower()) && e.TipoProducto == 1).ToArray();
+            listProduct = producto.Where(e => e.Nombre.ToLower().Contains(name.ToLower()) && e.TipoProducto == 1).ToArray();
         }
     }
 

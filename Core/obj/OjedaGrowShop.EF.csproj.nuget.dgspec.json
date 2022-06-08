@@ -1,23 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Proyectos CSharp Blazor\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj": {}
+    "C:\\Dev\\NetCore\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj": {}
   },
   "projects": {
-    "E:\\Proyectos CSharp Blazor\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj": {
+    "C:\\Dev\\NetCore\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Proyectos CSharp Blazor\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj",
+        "projectUniqueName": "C:\\Dev\\NetCore\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj",
         "projectName": "OjedaGrowShop.EF",
-        "projectPath": "E:\\Proyectos CSharp Blazor\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj",
-        "packagesPath": "C:\\Users\\Drago\\.nuget\\packages\\",
-        "outputPath": "E:\\Proyectos CSharp Blazor\\OjedaGrowShop\\Core\\obj\\",
+        "projectPath": "C:\\Dev\\NetCore\\OjedaGrowShop\\Core\\OjedaGrowShop.EF.csproj",
+        "packagesPath": "C:\\Users\\aceve\\.nuget\\packages\\",
+        "outputPath": "C:\\Dev\\NetCore\\OjedaGrowShop\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Drago\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\aceve\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -25,6 +26,7 @@
           "netcoreapp3.1"
         ],
         "sources": {
+          "C:\\Dev\\Local Nugets": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
@@ -65,6 +67,18 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[5.0.10, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "System.Text.Encoding.CodePages": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "iTextSharp": {
+              "target": "Package",
+              "version": "[5.5.13.3, )"
             }
           },
           "imports": [
@@ -82,7 +96,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }

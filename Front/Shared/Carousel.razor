@@ -72,16 +72,6 @@ else
 
 @code {
     IList<PhotoWrapper> files = null;
-    List<string> listImg = new List<string>()
-    {
-        "carousel/dsc001.jpg",
-        "carousel/dsc002.webp",
-        "carousel/dsc003.jpg"
-    };
-    
-
-
-
     protected override void OnInitialized()
     {
         files = photoService.ListImgCarousel("carousel");

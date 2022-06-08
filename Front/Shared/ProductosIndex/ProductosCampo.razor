@@ -1,7 +1,13 @@
-﻿@using OjedaGrowShop.EF.Models
+﻿@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@using OjedaGrowShop.EF.Models
 @using OjedaGrowShop.EF.Services.Interfaces
 @using System.Globalization
+@using OjedaGrowShop.Helper
 @inject IProductService ProducCampService
+@inject AuthorizationHelper authorizationHelper
+@inject ICartService cartService
+@inject ProtectedSessionStorage ProtectedSessionStore
+
 
 <style>
     .card {
@@ -25,69 +31,75 @@
         <div class="row justify-content-center gap-3 mt-4 mb-4">
             @if (listProduct == null)
             {
-                <p>loading...</p>
+                <MatProgressCircle Indeterminate="true" FourColored="true" />
             }
             else
             {
 
-                @for (var i = 0; i < 3; i++)
+                @foreach (var item in listProduct)
                 {
                     <div data-aos="flip-left" class="col-12 col-md-4 col-xl-3">
 
                         <MatCard class="demo-mat-card card" Style="min-height:450px; position: relative;">
                             <MatCardContent>
-                                <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(listProduct[i].Imagen)"></MatCardMedia>
+                                <MatCardMedia Wide="true" Style="overflow:hidden;" ImageUrl="@getImage(item.Imagen)"></MatCardMedia>
                                 <div class="demo-mat-card-content">
                                     <MatHeadline6 class="demo-mat-card-clean-margin text-center">
-                                        <span class="p-2">@listProduct[i].Nombre </span>
+                                        <span class="p-2">@item.Nombre </span>
                                     </MatHeadline6>
                                     <MatSubtitle2 class="demo-mat-card-clean-margin text-center">
-                                        @myTI.ToTitleCase(listProduct[i].Categoria)
+                                        @myTI.ToTitleCase(item.Categoria)
                                     </MatSubtitle2>
                                 </div>
 
                                 <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin m-3 text-left">
 
-                                    @if (listProduct[i].Descripcion.Length > 200)
+                                    @if (item.Descripcion.Length > 200)
                                     {
-                                        <span>@listProduct[i].Descripcion.Substring(0,listProduct[i].Descripcion.Length-150)... </span>
-                                        <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(listProduct[i]))">Leer más</MatButton>
+                                        <span>@item.Descripcion.Substring(0,item.Descripcion.Length-150)... </span>
+                                        <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
 
                                     }
                                     else
                                     {
-                                        <span>@listProduct[i].Descripcion.Substring(0,listProduct[i].Descripcion.Length-30)... </span>
-                                        <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(listProduct[i]))">Leer más</MatButton>
+                                        <span>@item.Descripcion.Substring(0,item.Descripcion.Length-30)... </span>
+                                        <MatButton Style="font-size:0.6rem;" OnClick="@(e=> OpenDialog(item))">Leer más</MatButton>
 
                                     }
 
 
                                 </MatBody2>
                             </MatCardContent>
-                                                        <MatCardActions Style="position: absolute; bottom: 0; width:100%">
+                            <MatCardActions Style="position: absolute; bottom: 0; width:100%">
                                 <MatCardActionIcons Class="justify-content-between">
-                                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
-                                    <MatButton Style="font-size:1.2rem">@listProduct[i].Precio €</MatButton>
+                                    @if (authorizationHelper.IsLoged)
+                                    {
+                                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart" OnClick="(async() => await anadirCarro(item.Id))">Añadir al carrito</MatButton>
+                                    }
+                                    <MatButton Style="font-size:1.2rem">@item.Precio €</MatButton>
                                 </MatCardActionIcons>
                             </MatCardActions>
                         </MatCard>
                     </div>
                 }
-                            <MatDialog @bind-IsOpen="@dialogIsOpen" Style="z-index:1001">
-                <MatDialogTitle>@nomProd </MatDialogTitle>
-                <MatDialogContent Style="color:black; font-size:1.2rem;" Class="text-left">
-                    <div class="text-center">
-                        <img src="@getImage(imgProd)" class="img-fluid" />
-                    </div>
-                    <p class="mt-5"><span style="font-weight:bold;">Categoría</span>:<br>@myTI.ToTitleCase(@categoriaProd)</p>
-                    <p><span style="font-weight:bold;">Detalles</span>:<br>@descrProd</p>
-                    <p><span style="font-weight:bold;">Precio</span>:<br>@precioProd €</p>
-                </MatDialogContent>
-                <MatDialogActions Class="justify-content-lg-between">
-                    <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
-                    <MatButton Icon="@MatIconNames.Shopping_cart" OnClick="anadirCarro">Añadir al carrito</MatButton>
-                </MatDialogActions>
-            </MatDialog>
+                <MatDialog @bind-IsOpen="@dialogIsOpen" Style="z-index:1001">
+                    <MatDialogTitle>@nomProd </MatDialogTitle>
+                    <MatDialogContent Style="color:black; font-size:1.2rem;" Class="text-left">
+                        <div class="text-center">
+                            <img src="@getImage(imgProd)" class="img-fluid" />
+                        </div>
+                        <p class="mt-5"><span style="font-weight:bold;">Categoría</span>:<br>@myTI.ToTitleCase(@categoriaProd)</p>
+                        <p><span style="font-weight:bold;">Detalles</span>:<br>@descrProd</p>
+                        <p><span style="font-weight:bold;">Precio</span>:<br>@precioProd €</p>
+                    </MatDialogContent>
+                    <MatDialogActions Class="justify-content-lg-between">
+                        <MatButton Raised="true" OnClick="@(e => { dialogIsOpen = false; })">Cerrar</MatButton>
+                        @if (authorizationHelper.IsLoged)
+                                    {
+                        <MatButton Disabled="disableButton" Icon="@MatIconNames.Shopping_cart" OnClick="(async() => await anadirCarro(idProd))">Añadir al carrito</MatButton>
+                                    }
+                    </MatDialogActions>
+                </MatDialog>
             }
         </div>
     </MatThemeProvider>
@@ -96,7 +108,7 @@
 @*Estilos de las cartas*@
 
 @code {
-
+    public int idUsuario = 0;
 
     public IEnumerable<Producto> producto { get; set; }
 
@@ -104,11 +116,11 @@
 
     public string tipoPro { get; set; } = "mascota";
 
-        //TextInfo para capitalizar, mayusculas, minusculas...
+    //TextInfo para capitalizar, mayusculas, minusculas...
 
     TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
-     //Datos de productos en el dialog
+    //Datos de productos en el dialog
 
     private int idProd = 0;
 
@@ -123,6 +135,8 @@
     private string imgProd = string.Empty;
 
     bool dialogIsOpen = false;
+
+    private bool disableButton = false;
 
     Producto[] listProduct;
 
@@ -141,9 +155,18 @@
     }
 
 
-    public void anadirCarro()
+    public async Task anadirCarro(int idProduct)
     {
-        Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+        disableButton = true;
+        if(await cartService.AddProduct(idUsuario, idProduct))
+        {
+            Helper.MatToastHelper.Show(MatToastType.Info, "¡Se ha añadido al carrito!", "Producto");
+        }
+        else
+        {
+            Helper.MatToastHelper.Show(MatToastType.Danger, "Ha ocurrido un error en la compra, contacte con un administrador", "Carrito");
+        }
+        disableButton = false;
 
     }
 
@@ -153,7 +176,10 @@
         {
             producto = await ProducCampService.ListProduct();
 
-            listProduct = producto.Where(e => e.TipoProducto == 2).ToArray();
+            listProduct = producto.Where(e => e.TipoProducto == 2).Take(3).ToArray();
+
+            idUsuario = await ProtectedSessionStore.GetAsync<int>("userId");
+
 
         }
         catch (Exception e)
@@ -168,7 +194,7 @@
 
     }
 
-        //Apertura de dialog
+    //Apertura de dialog
 
     void OpenDialog(Producto producto)
     {

@@ -1,0 +1,13 @@
+C:\Dev\NetCore\OjedaGrowShop\Core\bin\Release\netcoreapp3.1\OjedaGrowShop.EF.deps.json
+C:\Dev\NetCore\OjedaGrowShop\Core\bin\Release\netcoreapp3.1\OjedaGrowShop.EF.runtimeconfig.json
+C:\Dev\NetCore\OjedaGrowShop\Core\bin\Release\netcoreapp3.1\OjedaGrowShop.EF.runtimeconfig.dev.json
+C:\Dev\NetCore\OjedaGrowShop\Core\bin\Release\netcoreapp3.1\OjedaGrowShop.EF.dll
+C:\Dev\NetCore\OjedaGrowShop\Core\bin\Release\netcoreapp3.1\OjedaGrowShop.EF.pdb
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.AssemblyInfoInputs.cache
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.AssemblyInfo.cs
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.csproj.CoreCompileInputs.cache
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.dll
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.pdb
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.genruntimeconfig.cache
+C:\Dev\NetCore\OjedaGrowShop\Core\obj\Release\netcoreapp3.1\OjedaGrowShop.EF.csproj.AssemblyReference.cache
