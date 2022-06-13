@@ -3,3 +3,5 @@
 ################################################################################
 
 /Front/Properties/ServiceDependencies/OjedaGrowShop20220605160655 - Web Deploy/profile.arm.json
+/.vs
+/Core/obj/Debug/netcoreapp3.1
