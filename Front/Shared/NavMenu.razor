@@ -126,15 +126,7 @@
             <ul class="navbar-nav ancho" style="background-color: #009624 !important; margin-right:45px;">
                 <li class="nav-item dropdown ">
                     <span class="nav-link  text-white enlacesMenu dropdown-toggle pl-3 pr-3 text-left text-md-center" href="#" style=" font-weight: bold;" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        @if (user != null)
-                        {
-                            <i class="bi bi-person-circle"></i>  @user    
-                        }
-                        else
-                        {                          
-                            <MatProgressCircle Indeterminate="true" FourColored="true" Size="MatProgressCircleSize.Small"/>
-                        }
-                                               
+                      <i class="bi bi-person-circle"></i>  @user                           
                     </span>
                     @if (authorizationHelper.IsAdmin)
                     {

@@ -43,8 +43,7 @@ namespace OjedaGrowShop.EF.Services
                 Font = FontFactory.GetFont(FontFactory.HELVETICA, 12f)
             };
             text.Add("Factura del cliente aportada por la empresa OjedaGrowShop.");
-            doc.Add(text);
-            doc.Add(new Paragraph(" "));
+            text.Add(new Paragraph(" "));
             text.Add("Para cualquier duda o problema consulte con: +34 677161127");
             doc.Add(text);
             doc.Add(new Paragraph(" "));
